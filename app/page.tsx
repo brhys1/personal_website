@@ -1,5 +1,5 @@
-import Portfolio from "../portfolio"
+import Portfolio3D from "../portfolio-3d"
 
 export default function Page() {
-  return <Portfolio />
+  return <Portfolio3D />
 }
