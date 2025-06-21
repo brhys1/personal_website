@@ -649,20 +649,20 @@ function RideCameraRig({ children }: { children: React.ReactNode }) {
           {children}
         </group>
         <Html fullscreen>
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-4 z-50">
+          <>
             <button
-              className="px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors"
+              className="fixed bottom-6 left-4 px-4 py-2 text-sm bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors z-50"
               onClick={() => setManualOffset(prev => Math.max(0, prev - SCROLL_STEP))}
             >
               ← Back
             </button>
             <button
-              className="px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors"
+              className="fixed bottom-6 right-4 px-4 py-2 text-sm bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors z-50"
               onClick={() => setManualOffset(prev => Math.min(1, prev + SCROLL_STEP))}
             >
               Forward →
             </button>
-          </div>
+          </>
         </Html>
       </>
     )
