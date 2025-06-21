@@ -1,5 +1,7 @@
-import Portfolio3D from "../portfolio-3d"
+'use client'
+
+import PracticeScreen from "../practice_screen"
 
 export default function Page() {
-  return <Portfolio3D />
+  return <PracticeScreen />
 }
