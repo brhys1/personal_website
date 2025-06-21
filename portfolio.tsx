@@ -648,7 +648,7 @@ function RideCameraRig({ children }: { children: React.ReactNode }) {
         <group ref={group} rotation={[0, Math.PI, 0]}>
           {children}
         </group>
-          <Html fullscreen>
+          <Html fullscreen className="transform-none">
             <div>
               <button
                 className="fixed bottom-8 left-6 px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors z-50"
@@ -684,15 +684,12 @@ export default function Portfolio() {
       <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50">
         <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">My World</h2>
         <ul className="text-sm space-y-1 list-disc list-inside opacity-90">
-          {isMobile ? (
-            <>
-            </>
-          ) : (
-            <>
-              <li>Scroll to explore</li>
-              <li>Drag to look around</li>
-            </>
-          )}
+          {!isMobile ? (
+           <>
+            <li>Scroll to explore</li>
+            <li>Drag to look around</li>
+          </>
+          ) : null}
         </ul>
       </div>
 
