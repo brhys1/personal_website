@@ -6,7 +6,7 @@ import { Canvas, useFrame } from "@react-three/fiber"
 import { ScrollControls, Scroll, useScroll, OrbitControls, Environment, Text, Plane } from "@react-three/drei"
 import { useRef, useState, useEffect, useMemo, memo } from "react"
 import * as THREE from "three"
-import { useIsMobile } from "./hooks/use-mobile"
+import { useIsMobile } from "../hooks/use-mobile"
 
 const BLOCK_COUNT = 40 // how many blocks to spawn
 const SPACING = 6 // distance (z) between blocks
@@ -586,13 +586,13 @@ function ExperienceSection() {
     <group position={[0, 0, 75]}>
       {/* "Experiences" text on the ground */}
       <Text
-        position={[-15, -1, 15]}
-        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 8, 0]}
+        rotation={[0, Math.PI, 0]}
         fontSize={2}
-        color={TEXT_COLORS.company}
+        color="#ffffff"
         anchorX="center"
         anchorY="middle"
-        maxWidth={20}
+        maxWidth={20} 
         fontWeight={700}
       >
         EXPERIENCES
@@ -686,8 +686,8 @@ function ProjectsSection() {
       {/* Positioned further along the z-axis */}
       {/* "Projects" text on the ground */}
       <Text
-        position={[-15, -1, 15]}
-        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 8, 0]}
+        rotation={[0, Math.PI, 0]}
         fontSize={2}
         color="#059669" // emerald-700
         anchorX="center"
