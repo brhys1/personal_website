@@ -2,10 +2,11 @@
 
 import { Canvas, useFrame } from "@react-three/fiber"
 import { ScrollControls, Scroll, useScroll, OrbitControls, Environment, Text, Plane, Html } from "@react-three/drei"
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useMemo, memo } from "react"
 import * as THREE from "three"
 import { group } from "console"
 import { ScrollIndicator } from "@/components/ui/scroll-indicator"
+import { ScrollProgressBridge } from "@/components/ui/scroll-progress-bridge"
 
 const BLOCK_COUNT = 40      // how many blocks to spawn
 const SPACING      = 6      // distance (z) between blocks
@@ -57,12 +58,10 @@ function FloatingCard({
           rotation={[0, 3.14, 0]}
           position={[0, 0, 5]}
           style={{
-            width: "600px",
-            height: "300px",
             pointerEvents: "auto"
           }}
         >
-          <div className="w-full h-full bg-white/95 backdrop-blur-sm border border-blue-200 rounded-lg  shadow-lg p-8 flex flex-col items-center justify-center">
+          <div className="w-[90vw] max-w-md h-auto bg-white/95 backdrop-blur-sm border border-blue-200 rounded-lg shadow-lg p-6 sm:p-8 flex flex-col items-center justify-center text-center">
             <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
               Rhys Burman
             </h1>
@@ -80,27 +79,42 @@ function FloatingCard({
 }
 
 function Mountains({ position }: { position: THREE.Vector3Tuple }) {
-  const z = (position[2]/30)**2
-  const mtns = Math.floor(-position[2]/70 + 16)
+  // Memoize the mountain meshes to prevent regeneration on scroll
+  const mountainMeshes = useMemo(() => {
+    const z = (position[2] / 30) ** 2
+    const mtns = Math.floor(-position[2] / 70 + 16)
+
+    return Array.from({ length: mtns }, (_, i) => {
+      const x = -800 + (i * 1600 / (mtns - 1))
+      const coneHeight = z + Math.random() * 30
+      const color = `hsl(${200 + Math.random() * 40}, 35%, ${50 + Math.random() * 20}%)`
+      return { x, height: coneHeight, color }
+    })
+  }, [position[2]]) // Only recalculate if position[2] changes
+
   return (
     <group position={position}>
-      {/* Mountain range */}
-      {[...Array(mtns)].map((_, i) => (
-        <mesh key={i} position={[
-          -800 + (i * 1600/(mtns-1)), 
-          40, 
-          -20 - Math.random() * 30
-        ]}>
-          <coneGeometry args={[z + Math.random() * 30, z + Math.random() * 30, 40]} />
-          <meshLambertMaterial color={`hsl(${200 + Math.random() * 40}, 35%, ${50 + Math.random() * 20}%)`} />
+      {mountainMeshes.map((mtn, i) => (
+        <mesh key={i} position={[mtn.x, 40, -20 - Math.random() * 30]}>
+          <coneGeometry args={[mtn.height, mtn.height, 40]} />
+          <meshLambertMaterial color={mtn.color} />
         </mesh>
       ))}
     </group>
   )
 }
 
-function GrassField() {
+function Forest() {
   const grassRef = useRef<THREE.Group>(null)
+
+  const trees = useMemo(() => {
+    return Array.from({ length: 70 }, () => {
+      const x = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 400 + 20)
+      const z = (Math.random() - 0.5) * 400
+      const scale = 3.2 + Math.random() * 1.6
+      return { x, z, scale }
+    })
+  }, [])
 
   return (
     <group ref={grassRef}>
@@ -110,45 +124,48 @@ function GrassField() {
       </Plane>
 
       {/* Trees */}
-      {[...Array(70)].map((_, i) => {
-        // Generate x position outside of -20 to 20 range
-        const x = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 400 + 20)
-        const z = (Math.random() - 0.5) * 400
-        const scale = 3.2 + Math.random() * 1.6
-        
-        return (
-          <group key={i} position={[x, -1.8, z]} scale={scale}>
-            {/* Tree trunk */}
-            <mesh>
-              <cylinderGeometry args={[0.4, 0.6, 3]} />
-              <meshLambertMaterial color="#854d0e" />
+      {trees.map((tree, i) => (
+        <group key={i} position={[tree.x, -1.8, tree.z]} scale={tree.scale}>
+          {/* Tree trunk */}
+          <mesh>
+            <cylinderGeometry args={[0.4, 0.6, 3]} />
+            <meshLambertMaterial color="#854d0e" />
+          </mesh>
+          {/* Tree foliage - multiple layers */}
+          {[...Array(3)].map((_, j) => (
+            <mesh key={j} position={[0, 2 + j * 1.2, 0]}>
+              <coneGeometry args={[2 - j * 0.4, 2, 8]} />
+              <meshLambertMaterial color={`hsl(140, 60%, ${25 + j * 10}%)`} />
             </mesh>
-            {/* Tree foliage - multiple layers */}
-            {[...Array(3)].map((_, j) => (
-              <mesh key={j} position={[0, 2 + j * 1.2, 0]}>
-                <coneGeometry args={[2 - j * 0.4, 2, 8]} />
-                <meshLambertMaterial color={`hsl(140, 60%, ${25 + j * 10}%)`} />
-              </mesh>
-            ))}
-          </group>
-        )
-      })}
+          ))}
+        </group>
+      ))}
     </group>
   )
 }
 
 function PathStones() {
+  // Memoize the stone positions and rotations
+  const stones = useMemo(() => {
+    return Array.from({ length: 40 }, (_, i) => {
+      const x = Math.sin(i * 0.3) * 2
+      const rotation = Math.random() * Math.PI
+      const scale = 0.8 + Math.random() * 0.4
+      return { x, z: i * 4, rotation, scale }
+    })
+  }, []) // Empty dependency array since stones don't change
+
   return (
     <group>
-      {[...Array(40)].map((_, i) => (
+      {stones.map((stone, i) => (
         <group key={i}>
-          <mesh position={[Math.sin(i * 0.3) * 2, -1.5, i * 4]} rotation={[0, Math.random() * Math.PI, 0]}>
-            <cylinderGeometry args={[0.8 + Math.random() * 0.4, 0.8 + Math.random() * 0.4, 0.2]} />
+          <mesh position={[stone.x, -1.5, stone.z]} rotation={[0, stone.rotation, 0]}>
+            <cylinderGeometry args={[stone.scale, stone.scale, 0.2]} />
             <meshLambertMaterial color="#94a3b8" />
           </mesh>
           {/* Add arrow above the first stone */}
           {i === 0 && (
-            <group position={[Math.sin(i * 0.3) * 2, 0, i * 4]}>
+            <group position={[stone.x, 0, stone.z]}>
               <mesh position={[0, 0, 1]} rotation={[-Math.PI / 2, 0, Math.PI]}>
                 <shapeGeometry args={[new THREE.Shape()
                   .moveTo(-0.25, 0)      // Start at base left
@@ -593,7 +610,8 @@ function ExperienceSection() {
   )
 }
 
-function NatureScene() {
+// Memoize the entire NatureScene to prevent unnecessary re-renders
+const NatureScene = memo(function NatureScene() {
   return (
     <>
       <FloatingCard 
@@ -605,12 +623,12 @@ function NatureScene() {
       </FloatingCard>
       <ExperienceSection />
       <PathStones />
-      <GrassField />
+      <Forest />
       <Mountains position={[0, 0, 400]} />
       <Mountains position={[0, 0, 600]} />
     </>
   )
-}
+})
 
 /**
  * Camera parent-group – we'll slide it forward as you scroll.
@@ -634,18 +652,10 @@ function RideCameraRig({ children }: { children: React.ReactNode }) {
   )
 }
 
-function ScrollUpdater({ setScrollProgress }: { setScrollProgress: (v: number) => void }) {
-  const scroll = useScroll()
-  useFrame(() => {
-    setScrollProgress(scroll.offset)
-  })
-  return null
-}
-
 export default function Portfolio() {
   const [scrollProgress, setScrollProgress] = useState(0)
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600 touch-auto overflow-hidden">
+    <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600">
       {/* Fixed overlay that won't move with scroll */}
       <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50">
         <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Mountain Path</h2>
@@ -677,7 +687,7 @@ export default function Portfolio() {
               <NatureScene />
             </RideCameraRig>
           </Scroll>
-          <ScrollUpdater setScrollProgress={setScrollProgress} />
+          <ScrollProgressBridge setProgress={setScrollProgress} />
         </ScrollControls>
       </Canvas>
     </div>
