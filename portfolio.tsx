@@ -10,8 +10,10 @@ import { useIsMobile } from "./hooks/use-mobile"
 const BLOCK_COUNT = 40      // how many blocks to spawn
 const SPACING      = 6      // distance (z) between blocks
 const CORRIDOR_LEN = BLOCK_COUNT * SPACING   // used to map scroll → distance
-const cameraYRef = { current: 0 }
 const SCROLL_STEP = 0.1 // Amount to move forward/backward on button press
+const MIN_OFFSET = 0
+const MAX_OFFSET = 1
+const cameraYRef = { current: 0 }
 
 const TEXT_COLORS = {
   company: "#1e40af", // dark blue
@@ -93,6 +95,7 @@ function Forest() {
 }
 
 function PathStones() {
+  const isMobile = useIsMobile()
   // Memoize the stone positions and rotations
   const stones = useMemo(() => {
     return Array.from({ length: 40 }, (_, i) => {
@@ -114,7 +117,7 @@ function PathStones() {
           {/* Add arrow above the first stone */}
           {i === 0 && (
             <group position={[stone.x, 0, stone.z]}>
-              <mesh position={[0, 0, 1]} rotation={[-Math.PI / 2, 0, Math.PI]}>
+              <mesh position={[0, 0, 1]} rotation={[-Math.PI / 2, 0, Math.PI]} scale={isMobile ? 0.7 : 1}>
                 <shapeGeometry args={[new THREE.Shape()
                   .moveTo(-0.25, 0)      // Start at base left
                   .lineTo(0.25, 0)       // Base right
@@ -130,7 +133,7 @@ function PathStones() {
               <Text
                 position={[0, 0, 0]}
                 rotation={[-Math.PI / 2, 0, Math.PI]}
-                fontSize={0.2}
+                fontSize={isMobile ? 0.15 : 0.2}
                 color={TEXT_COLORS.content}
                 anchorX="center"
                 anchorY="middle"
@@ -559,53 +562,57 @@ function ExperienceSection() {
 }
 
 function IntroCard() {
+  const isMobile = useIsMobile()
+  const position: [number, number, number] = isMobile ? [0, 2, 10] : [0, 2, 7]  // Move further back on mobile
+  const scale = isMobile ? 0.8 : 1  // Scale down on mobile
+
   return (
-  <group position={[0, 2, 5]} rotation={[0, Math.PI, 0]}>
-        {/* Background panel */}
-        <mesh position={[0, 0, -0.1]}>
-          <planeGeometry args={[12, 8]} />
-          <meshStandardMaterial color="#ffffff" transparent opacity={0.9} />
-        </mesh>
-        
-        {/* Title */}
-        <Text
-          position={[0, 1.5, 0]}
-          fontSize={0.8}
-          color="#2563eb"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={8}
-        >
-          Rhys Burman
-        </Text>
+    <group position={position} rotation={[0, Math.PI, 0]} scale={scale}>
+      {/* Background panel */}
+      <mesh position={[0, 0, -0.1]}>
+        <planeGeometry args={[12, 8]} />
+        <meshStandardMaterial color="#ffffff" transparent opacity={0.9} />
+      </mesh>
+      
+      {/* Title */}
+      <Text
+        position={[0, 1.5, 0]}
+        fontSize={0.8}
+        color="#2563eb"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={8}
+      >
+        Rhys Burman
+      </Text>
 
-        {/* Subtitle */}
-        <Text
-          position={[0, 0.5, 0]}
-          fontSize={0.4}
-          color="#3b82f6"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={8}
-        >
-          Data Science & Sustainability
-        </Text>
+      {/* Subtitle */}
+      <Text
+        position={[0, 0.5, 0]}
+        fontSize={0.4}
+        color="#3b82f6"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={8}
+      >
+        Data Science & Sustainability
+      </Text>
 
-        {/* Description */}
-        <Text
-          position={[0, -0.5, 0]}
-          fontSize={0.25}
-          color="#64748b"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={8}
-          textAlign="center"
-        >
-          Welcome to my digital space where data science{"\n"}
-          meets sustainability. I'm passionate about leveraging{"\n"}
-          data-driven solutions to tackle environmental challenges.
-        </Text>
-      </group>
+      {/* Description */}
+      <Text
+        position={[0, -0.5, 0]}
+        fontSize={0.25}
+        color="#64748b"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={8}
+        textAlign="center"
+      >
+        Welcome to my digital space where data science{"\n"}
+        meets sustainability. I'm passionate about leveraging{"\n"}
+        data-driven solutions to tackle environmental challenges.
+      </Text>
+    </group>
   )
 }
 
@@ -623,50 +630,21 @@ const NatureScene = memo(function NatureScene() {
   )
 })
 
-/**
- * Camera parent-group – we'll slide it forward as you scroll.
- */
-function RideCameraRig({ children }: { children: React.ReactNode }) {
+function RideCameraRig({ children, manualOffset }: { children: React.ReactNode, manualOffset: number }) {
   const group = useRef<THREE.Group>(null!)
   const scroll = useScroll()
-  const [manualOffset, setManualOffset] = useState(0)
   const isMobile = useIsMobile()
 
   useFrame(() => {
-    const offset = isMobile ? manualOffset : scroll.offset
+    const offset = isMobile ? manualOffset : scroll?.offset ?? 0 
     const z = offset * CORRIDOR_LEN
     const y = -1.5 + offset * -3
 
-    group.current.position.z = z
-    group.current.position.y = y
+    if (group.current) {
+      group.current.position.z = z
+      group.current.position.y = y
+    }
   })
-
-  // Add mobile navigation buttons
-  if (isMobile) {
-    return (
-      <>
-        <group ref={group} rotation={[0, Math.PI, 0]}>
-          {children}
-        </group>
-          <Html fullscreen className="transform-none">
-            <div>
-              <button
-                className="fixed bottom-8 left-6 px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors z-50"
-                onClick={() => setManualOffset(prev => Math.max(0, prev - SCROLL_STEP))}
-              >
-                ← Back
-              </button>
-              <button
-                className="fixed bottom-8 right-6 px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors z-50"
-                onClick={() => setManualOffset(prev => Math.min(1, prev + SCROLL_STEP))}
-              >
-                Forward →
-              </button>
-            </div>
-          </Html>
-      </>
-    )
-  }
 
   return (
     <group ref={group} rotation={[0, Math.PI, 0]}>
@@ -675,8 +653,27 @@ function RideCameraRig({ children }: { children: React.ReactNode }) {
   )
 }
 
+
 export default function Portfolio() {
   const isMobile = useIsMobile()
+  const [manualOffset, setManualOffset] = useState(0)
+  const [isMovingForward, setIsMovingForward] = useState(false)
+  const [isMovingBackward, setIsMovingBackward] = useState(false)
+
+  // Handle continuous movement
+  useEffect(() => {
+    if (!isMobile) return
+
+    const moveInterval = setInterval(() => {
+      if (isMovingForward) {
+        setManualOffset(prev => Math.min(MAX_OFFSET, prev + SCROLL_STEP * 0.016)) // 0.016 is roughly one frame at 60fps
+      } else if (isMovingBackward) {
+        setManualOffset(prev => Math.max(MIN_OFFSET, prev - SCROLL_STEP * 0.016))
+      }
+    }, 16) // Run at roughly 60fps
+
+    return () => clearInterval(moveInterval)
+  }, [isMobile, isMovingForward, isMovingBackward])
 
   return (
     <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600">
@@ -692,6 +689,32 @@ export default function Portfolio() {
           ) : null}
         </ul>
       </div>
+
+       {/* Mobile nav buttons OUTSIDE the Canvas */}
+       {isMobile && (
+        <>
+          <div className="fixed bottom-8 left-6 z-50">
+            <button
+              className="px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors"
+              onPointerDown={() => setIsMovingBackward(true)}
+              onPointerUp={() => setIsMovingBackward(false)}
+              onPointerLeave={() => setIsMovingBackward(false)}
+            >
+              ← Back
+            </button>
+          </div>
+          <div className="fixed bottom-8 right-6 z-50">
+            <button
+              className="px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors"
+              onPointerDown={() => setIsMovingForward(true)}
+              onPointerUp={() => setIsMovingForward(false)}
+              onPointerLeave={() => setIsMovingForward(false)}
+            >
+              Forward →
+            </button>
+          </div>
+        </>
+      )}
 
       <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
         <color attach="background" args={['#93c5fd']} />
@@ -710,13 +733,13 @@ export default function Portfolio() {
         {!isMobile ? (
           <ScrollControls pages={4} damping={0.15}>
             <Scroll>
-              <RideCameraRig>
+              <RideCameraRig manualOffset={manualOffset}>
                 <NatureScene />
               </RideCameraRig>
             </Scroll>
           </ScrollControls>
         ) : (
-          <RideCameraRig>
+          <RideCameraRig manualOffset={manualOffset}>
             <NatureScene />
           </RideCameraRig>
         )}
