@@ -9,4 +9,4 @@ const Portfolio = dynamic(() => import("@/components/portfolio-3d"), {
 
 export default function PortfolioPage() {
   return <Portfolio />
-} 
+}
