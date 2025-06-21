@@ -1,339 +1,675 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { BarChart3, Brain, Github, Linkedin, Mail, MapPin, TrendingUp, ExternalLink } from "lucide-react"
-import Link from "next/link"
+import { Canvas, useFrame } from "@react-three/fiber"
+import { ScrollControls, Scroll, useScroll, OrbitControls, Environment, Text, Plane, Html } from "@react-three/drei"
+import { useRef } from "react"
+import * as THREE from "three"
+import { group } from "console"
 
-export default function Portfolio() {
-  const skills = [
-    { name: "Python", level: 95 },
-    { name: "R", level: 90 },
-    { name: "SQL", level: 88 },
-    { name: "Machine Learning", level: 92 },
-    { name: "Deep Learning", level: 85 },
-    { name: "Data Visualization", level: 90 },
-  ]
+const BLOCK_COUNT = 40      // how many blocks to spawn
+const SPACING      = 6      // distance (z) between blocks
+const CORRIDOR_LEN = BLOCK_COUNT * SPACING   // used to map scroll → distance
+const cameraYRef = { current: 0 }
 
-  const experiences = [
-    {
-      title: "Senior Data Scientist",
-      company: "University of Michigan - Research Lab",
-      period: "2022 - Present",
-      description:
-        "Leading research initiatives in predictive modeling and statistical analysis for healthcare outcomes. Developed machine learning pipelines processing 10M+ patient records.",
-      technologies: ["Python", "TensorFlow", "Apache Spark", "PostgreSQL"],
-    },
-    {
-      title: "Data Science Consultant",
-      company: "Michigan Analytics Consortium",
-      period: "2021 - 2022",
-      description:
-        "Provided data science consulting services to Fortune 500 companies. Implemented recommendation systems and customer segmentation models.",
-      technologies: ["R", "Shiny", "AWS", "Docker"],
-    },
-    {
-      title: "Research Assistant",
-      company: "U-M School of Information",
-      period: "2020 - 2021",
-      description:
-        "Conducted research on natural language processing and sentiment analysis. Published 3 peer-reviewed papers in top-tier conferences.",
-      technologies: ["Python", "NLTK", "PyTorch", "Jupyter"],
-    },
-    {
-      title: "Data Analyst Intern",
-      company: "Ford Motor Company",
-      period: "2019 - 2020",
-      description:
-        "Analyzed vehicle performance data and customer feedback. Built dashboards for executive reporting and identified key performance indicators.",
-      technologies: ["Tableau", "SQL Server", "Excel", "Power BI"],
-    },
-  ]
+const TEXT_COLORS = {
+  company: "#1e40af", // dark blue
+  title: "#3b82f6",  // medium blue
+  content: "#1f2937"  // dark gray
+} as const
 
-  const projects = [
-    {
-      title: "Healthcare Outcome Predictor",
-      description:
-        "Developed a machine learning model to predict patient readmission rates with 94% accuracy. Deployed as a web application for hospital administrators.",
-      technologies: ["Python", "Scikit-learn", "Flask", "React"],
-      impact: "Reduced readmission rates by 15%",
-      github: "#",
-      demo: "#",
-    },
-    {
-      title: "Climate Data Visualization Platform",
-      description:
-        "Created an interactive dashboard analyzing 50 years of climate data across Michigan. Features real-time updates and predictive modeling.",
-      technologies: ["D3.js", "Python", "FastAPI", "PostgreSQL"],
-      impact: "Used by 500+ researchers",
-      github: "#",
-      demo: "#",
-    },
-    {
-      title: "Social Media Sentiment Analyzer",
-      description:
-        "Built a real-time sentiment analysis system processing 100K+ tweets daily. Implemented custom NLP models for domain-specific analysis.",
-      technologies: ["Python", "BERT", "Apache Kafka", "MongoDB"],
-      impact: "98.5% accuracy rate",
-      github: "#",
-      demo: "#",
-    },
-    {
-      title: "Supply Chain Optimization Model",
-      description:
-        "Developed optimization algorithms for supply chain management, reducing costs by 20% while improving delivery times.",
-      technologies: ["R", "Linear Programming", "Shiny", "MySQL"],
-      impact: "$2M annual savings",
-      github: "#",
-      demo: "#",
-    },
-  ]
+/**
+ * One long row of alternating blocks you'll fly THROUGH.
+ * Blocks sit just off-centre so the camera path stays clear.
+ */
+
+
+// 3D Scene Components
+function FloatingCard({ 
+  position, 
+  rotation, 
+  children, 
+  scale = 1 
+}: { 
+  position: THREE.Vector3Tuple
+  rotation: THREE.Vector3Tuple
+  children: React.ReactNode
+  scale?: number 
+}) {
+  const meshRef = useRef<THREE.Mesh>(null)
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      // Gentler floating motion
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.1
+      // Remove rotation animation to debug the base rotation
+    }
+  })
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 text-white relative overflow-hidden">
-      {/* Mountain Silhouettes */}
-      <div className="absolute inset-0 opacity-10">
-        <svg viewBox="0 0 1200 800" className="w-full h-full">
-          <path
-            d="M0,600 L200,400 L400,500 L600,300 L800,450 L1000,250 L1200,400 L1200,800 L0,800 Z"
-            fill="currentColor"
+    <group position={position} rotation={rotation} scale={scale}>
+      <mesh ref={meshRef}>
+        <planeGeometry args={[8, 6]} />
+        <meshStandardMaterial transparent opacity={0.05} color="#1e40af" />
+        <Html
+          transform
+          occlude
+          rotation={[0, 3.14, 0]}
+          position={[0, 0, 5]}
+          style={{
+            width: "600px",
+            height: "300px",
+            pointerEvents: "auto"
+          }}
+        >
+          <div className="w-full h-full bg-white/95 backdrop-blur-sm border border-blue-200 rounded-lg  shadow-lg p-8 flex flex-col items-center justify-center">
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+              Rhys Burman
+            </h1>
+            <h2 className="text-2xl text-blue-600 mb-6">Data Science & Sustainability</h2>
+            <p className="text-lg text-gray-700 mb-8 max-w-2xl">
+              Welcome to my digital space where data science meets sustainability. 
+              I'm passionate about leveraging data-driven solutions to tackle environmental challenges 
+              and create a more sustainable future.
+            </p>
+          </div>
+        </Html>
+      </mesh>
+    </group>
+  )
+}
+
+function Mountains({ position }: { position: THREE.Vector3Tuple }) {
+  const z = (position[2]/30)**2
+  const mtns = Math.floor(-position[2]/70 + 16)
+  return (
+    <group position={position}>
+      {/* Mountain range */}
+      {[...Array(mtns)].map((_, i) => (
+        <mesh key={i} position={[
+          -800 + (i * 1600/(mtns-1)), 
+          40, 
+          -20 - Math.random() * 30
+        ]}>
+          <coneGeometry args={[z + Math.random() * 30, z + Math.random() * 30, 40]} />
+          <meshLambertMaterial color={`hsl(${200 + Math.random() * 40}, 35%, ${50 + Math.random() * 20}%)`} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function GrassField() {
+  const grassRef = useRef<THREE.Group>(null)
+
+  return (
+    <group ref={grassRef}>
+      {/* Ground plane */}
+      <Plane args={[600, 600]} rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
+        <meshLambertMaterial color="#4ade80" />
+      </Plane>
+
+      {/* Trees */}
+      {[...Array(70)].map((_, i) => {
+        // Generate x position outside of -20 to 20 range
+        const x = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 400 + 20)
+        const z = (Math.random() - 0.5) * 400
+        const scale = 3.2 + Math.random() * 1.6
+        
+        return (
+          <group key={i} position={[x, -1.8, z]} scale={scale}>
+            {/* Tree trunk */}
+            <mesh>
+              <cylinderGeometry args={[0.4, 0.6, 3]} />
+              <meshLambertMaterial color="#854d0e" />
+            </mesh>
+            {/* Tree foliage - multiple layers */}
+            {[...Array(3)].map((_, j) => (
+              <mesh key={j} position={[0, 2 + j * 1.2, 0]}>
+                <coneGeometry args={[2 - j * 0.4, 2, 8]} />
+                <meshLambertMaterial color={`hsl(140, 60%, ${25 + j * 10}%)`} />
+              </mesh>
+            ))}
+          </group>
+        )
+      })}
+    </group>
+  )
+}
+
+function PathStones() {
+  return (
+    <group>
+      {[...Array(40)].map((_, i) => (
+        <group key={i}>
+          <mesh position={[Math.sin(i * 0.3) * 2, -1.5, i * 4]} rotation={[0, Math.random() * Math.PI, 0]}>
+            <cylinderGeometry args={[0.8 + Math.random() * 0.4, 0.8 + Math.random() * 0.4, 0.2]} />
+            <meshLambertMaterial color="#94a3b8" />
+          </mesh>
+          {/* Add arrow above the first stone */}
+          {i === 0 && (
+            <group position={[Math.sin(i * 0.3) * 2, 0, i * 4]}>
+              <mesh position={[0, 0, 1]} rotation={[-Math.PI / 2, 0, Math.PI]}>
+                <shapeGeometry args={[new THREE.Shape()
+                  .moveTo(-0.25, 0)      // Start at base left
+                  .lineTo(0.25, 0)       // Base right
+                  .lineTo(0.25, 0.5)     // Shaft right
+                  .lineTo(0.5, 0.5)      // Arrow head base right
+                  .lineTo(0, 1)          // Arrow head tip
+                  .lineTo(-0.5, 0.5)     // Arrow head base left
+                  .lineTo(-0.25, 0.5)    // Shaft left
+                  .lineTo(-0.25, 0)      // Back to start
+                ]} />
+                <meshStandardMaterial color={TEXT_COLORS.company} />
+              </mesh>
+              <Text
+                position={[0, 0, 0]}
+                rotation={[-Math.PI / 2, 0, Math.PI]}
+                fontSize={0.2}
+                color={TEXT_COLORS.content}
+                anchorX="center"
+                anchorY="middle"
+                maxWidth={4}
+              >
+                Look Up and Explore
+              </Text>
+            </group>
+          )}
+        </group>
+      ))}
+    </group>
+  )
+}
+
+interface ExperienceDisplayProps {
+  position: THREE.Vector3Tuple
+  rotation: THREE.Vector3Tuple
+  title: string
+  company: string
+  impact: string | string[]
+  logoPlaceholder?: boolean
+}
+
+function ExperienceDisplay({ position, rotation, title, company, impact, logoPlaceholder = true }: ExperienceDisplayProps) {
+  const groupRef = useRef<THREE.Group>(null)
+  const platformColor = "#60a5fa"
+  
+  useFrame((state) => {
+    if (groupRef.current) {
+      const floatY = Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.1
+      groupRef.current.position.set(
+        position[0],
+        cameraYRef.current + floatY,
+        position[2]
+      )
+    }
+  })
+
+  return (
+    <group rotation={rotation} ref={groupRef}>
+      <group position={[0, 1.5, 0]}>
+        {/* Logo placeholder */}
+        {logoPlaceholder && (
+          <mesh position={[0, 4.5, 0]}>
+            <boxGeometry args={[4, 1, 0.2]} />
+            <meshStandardMaterial color="#e5e7eb" />
+          </mesh>
+        )}
+
+        <mesh position={[0, 0.4, -0.05]}>
+          <planeGeometry args={[5.5, 10]} />
+          <meshStandardMaterial color="white" transparent opacity={1} />
+        </mesh>
+        {/* Company Name */}
+        <Text
+          position={[0, 3, 0]}
+          fontSize={0.4}
+          color={TEXT_COLORS.company}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4}
+        >
+          {company}
+        </Text>
+
+        {/* Title */}
+        <Text
+          position={[0, 2, 0]}
+          fontSize={0.25}
+          color={TEXT_COLORS.title}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4}
+        >
+          {title}
+        </Text>
+
+        {/* Impact bullets */}
+        {Array.isArray(impact) && impact.map((point, index) => (
+          <Text
+            key={index}
+            position={[-1.8, 1 - index * 0.4, 0]}
+            fontSize={0.18}
+            color={TEXT_COLORS.content}
+            anchorX="left"
+            anchorY="middle"
+            maxWidth={3.4}
+            lineHeight={1.2}
+          >
+            • {point}
+          </Text>
+        ))}
+      </group>
+
+      {/* Particle effect */}
+      <points>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            args={[Float32Array.from(Array(300).fill(0).map(() => (Math.random() - 0.5) * 4)), 3]}
           />
-          <path
-            d="M0,700 L150,550 L350,600 L550,450 L750,550 L950,400 L1200,500 L1200,800 L0,800 Z"
-            fill="currentColor"
-            opacity="0.5"
-          />
-        </svg>
+        </bufferGeometry>
+        <pointsMaterial size={0.02} color={platformColor} transparent opacity={0.4} />
+      </points>
+    </group>
+  )
+}
+
+function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple, rotation: THREE.Vector3Tuple }) {
+  const groupRef = useRef<THREE.Group>(null)
+  const primaryColor = "#2563eb"  // blue-600
+  const bgColor = "#ffffff"
+  
+  useFrame((state) => {
+    if (groupRef.current) {
+      const floatY = Math.sin(state.clock.elapsedTime * 0.5) * 0.1
+      groupRef.current.position.set(
+        position[0],
+        cameraYRef.current + floatY,
+        position[2]
+      )
+    }
+  })
+
+  return (
+    <group rotation={rotation} ref={groupRef}>
+      {/* Main panel */}
+      <mesh position={[0, 1.5, 0]}>
+        <boxGeometry args={[6, 4, 0.1]} />
+        <meshStandardMaterial color={bgColor} />
+      </mesh>
+
+      {/* Accent border top */}
+      <mesh position={[0, 3.4, 0.06]}>
+        <boxGeometry args={[6, 0.2, 0.01]} />
+        <meshStandardMaterial color={primaryColor} />
+      </mesh>
+
+      {/* Accent border bottom */}
+      <mesh position={[0, -0.4, 0.06]}>
+        <boxGeometry args={[6, 0.2, 0.01]} />
+        <meshStandardMaterial color={primaryColor} />
+      </mesh>
+
+      {/* Content */}
+      <group position={[0, 2, 0.06]}>
+        <Text
+          position={[0, 0.8, 0]}
+          fontSize={0.5}
+          color={TEXT_COLORS.company}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={5}
+        >
+          Rhys Burman
+        </Text>
+
+        <Text
+          position={[0, 0.2, 0]}
+          fontSize={0.25}
+          color={TEXT_COLORS.title}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={5}
+        >
+          Data Scientist & Sustainability
+        </Text>
+
+        <Text
+          position={[0, -0.4, 0]}
+          fontSize={0.18}
+          color={TEXT_COLORS.content}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4.5}
+          textAlign="center"
+        >
+          Leveraging ML and data science to drive
+        </Text>
+        <Text
+          position={[0, -0.7, 0]}
+          fontSize={0.18}
+          color={TEXT_COLORS.content}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4.5}
+          textAlign="center"
+        >
+          environmental impact through innovative solutions
+        </Text>
+
+        <group position={[0, -1.2, 0]}>
+          {[
+            "Python • ML • AWS",
+            "Sustainability • Analytics",
+            "Full Stack • Data Engineering"
+          ].map((text, idx) => (
+            <Text
+              key={idx}
+              position={[0, -idx * 0.3, 0]}
+              fontSize={0.15}
+              color={TEXT_COLORS.content}
+              anchorX="center"
+              anchorY="middle"
+              maxWidth={4}
+            >
+              {text}
+            </Text>
+          ))}
+        </group>
+      </group>
+    </group>
+  )
+}
+
+function InterestPedestal({ 
+  position, 
+  rotation, 
+  icon, 
+  label 
+}: { 
+  position: THREE.Vector3Tuple, 
+  rotation: THREE.Vector3Tuple,
+  icon: "soccer" | "book" | "map" | "cards",
+  label: string
+}) {
+  const groupRef = useRef<THREE.Group>(null)
+  const platformColor = "#60a5fa"
+  const time = useRef(0)
+  
+  useFrame((state) => {
+    time.current = state.clock.elapsedTime
+    if (groupRef.current) {
+      const floatY = Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.1
+      groupRef.current.position.set(
+        position[0],
+        cameraYRef.current + floatY,
+        position[2]
+      )
+    }
+  })
+
+  const renderIcon = () => {
+    switch(icon) {
+      case "soccer":
+        return (
+          <mesh position={[0, 2, 0]} rotation={[0, time.current * 0.5, 0]}>
+            <sphereGeometry args={[0.6, 16, 16]} />
+            <meshStandardMaterial color="white" />
+          </mesh>
+        )
+      case "book":
+        return (
+          <group position={[0, 2, 0]} rotation={[0.3, time.current * 0.2, 0]}>
+            {/* Book cover */}
+            <mesh>
+              <boxGeometry args={[0.8, 1, 0.1]} />
+              <meshStandardMaterial color="#1e40af" />
+            </mesh>
+            {/* Pages */}
+            <mesh position={[0.4, 0, 0]}>
+              <boxGeometry args={[0.05, 0.95, 0.08]} />
+              <meshStandardMaterial color="white" />
+            </mesh>
+          </group>
+        )
+      case "map":
+        return (
+          <group position={[0, 2, 0]} rotation={[0.5, time.current * 0.2, 0]}>
+            {/* Map base */}
+            <mesh>
+              <planeGeometry args={[1.2, 0.8]} />
+              <meshStandardMaterial color="#fef3c7" side={THREE.DoubleSide} />
+            </mesh>
+            {/* Map details */}
+            <mesh position={[0, 0, 0.01]}>
+              <planeGeometry args={[1, 0.6]} />
+              <meshStandardMaterial color="#92400e" opacity={0.3} transparent side={THREE.DoubleSide} />
+            </mesh>
+          </group>
+        )
+      case "cards":
+        return (
+          <group position={[0, 2, 0]} rotation={[0.2, time.current * 0.3, 0]}>
+            {/* Multiple cards fanned out */}
+            {[0, 1, 2].map((i) => (
+              <mesh key={i} position={[i * 0.1, i * 0.05, 0]} rotation={[0, Math.PI/2, i * 0.2]}>
+                <boxGeometry args={[0.7, 1, 0.01]} />
+                <meshStandardMaterial color="red" />
+              </mesh>
+            ))}
+          </group>
+        )
+    }
+  }
+
+  return (
+    <group rotation={rotation} ref={groupRef}>
+      {/* Platform base */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[1, 1.2, 0.2, 8]} />
+        <meshStandardMaterial color={platformColor} />
+      </mesh>
+      
+      {/* Light beam */}
+      <mesh position={[0, 1, 0]}>
+        <cylinderGeometry args={[0.1, 1, 2, 8, 1, true]} />
+        <meshStandardMaterial color={platformColor} transparent opacity={0.1} side={THREE.DoubleSide} />
+      </mesh>
+
+      {/* Rotating ring */}
+      <mesh position={[0, 0.5, 0]} rotation={[0, time.current * 0.5 + (position[0] < -10 ? Math.PI : 0), 0]}>
+        <torusGeometry args={[1.1, 0.05, 16, 32]} />
+        <meshStandardMaterial color={platformColor} />
+      </mesh>
+
+      {/* Icon */}
+      {renderIcon()}
+
+      {/* Label */}
+      <Text
+        position={[0, 0.3, 1.3]}
+        fontSize={0.2}
+        color={TEXT_COLORS.content}
+        fontWeight={700}
+        anchorX="center"
+        anchorY="middle"
+      >
+        {label}
+      </Text>
+    </group>
+  )
+}
+
+function ExperienceSection() {
+  return (
+    <group position={[0, 0, 75]}>
+      {/* Personal Description */}
+      <PersonalCard
+        position={[8, 0, -50]}
+        rotation={[0, Math.PI/3 + Math.PI, 0]}
+      />
+
+      {/* Interest Pedestals */}
+      <group position={[8, 0, -35]}>
+        <InterestPedestal
+          position={[-2, 0, 0]}
+          rotation={[0, Math.PI/6 + Math.PI, 0]}
+          icon="soccer"
+          label="Soccer"
+        />
+        <InterestPedestal
+          position={[-14, 0, 0]}
+          rotation={[0, -Math.PI/6 + Math.PI, 0]}
+          icon="book"
+          label="Harry Potter"
+        />
+        <InterestPedestal
+          position={[-14, 0, 6]}
+          rotation={[0, -Math.PI/6 + Math.PI, 0]}
+          icon="map"
+          label="Geography"
+        />
+        <InterestPedestal
+          position={[-2, 0, 6]}
+          rotation={[0, Math.PI/6 + Math.PI, 0]}
+          icon="cards"
+          label="Card Games"
+        />
+      </group>
+
+      {/* Clear Estimates */}
+      <ExperienceDisplay
+        position={[-8, 0, 0]}
+        rotation={[0, -Math.PI/3 + Math.PI, 0]}
+        company="Clear Estimates"
+        title="Lead Data Scientist"
+        impact={[
+          "Built price scraper covering 350+ locations, 90% faster",
+          "Analyzed 28M rows to improve accuracy by 21%",
+          "Developed AI-powered contractor leads platform"
+        ]}
+      />
+
+      {/* Delta Airlines */}
+      <ExperienceDisplay
+        position={[8, 0, 10]}
+        rotation={[0, Math.PI/3 + Math.PI, 0]}
+        company="Delta Airlines"
+        title="Data Science Intern"
+        impact={[
+          "Flight predictor reduced decisions by 70%",
+          "ML models achieved 96% specificity",
+          "Cut wait times by 4min, $1M projected gain"
+        ]}
+      />
+
+      {/* UMich Sustainability */}
+      <ExperienceDisplay
+        position={[-8, 0, 20]}
+        rotation={[0, -Math.PI/3 + Math.PI, 0]}
+        company="UMich Office of Sustainability"
+        title="Data Science Consultant"
+        impact={[
+          "Created first automated emissions tracking",
+          "Optimized data processing with pandas/polars",
+          "Built automated sustainable labs workflows"
+        ]}
+      />
+
+      {/* Integrate */}
+      <ExperienceDisplay
+        position={[8, 0, 30]}
+        rotation={[0, Math.PI/3 + Math.PI, 0]}
+        company="Integrate"
+        title="ML Engineer"
+        impact={[
+          "Risk models with 87% accuracy for healthcare",
+          "Built HIPAA-compliant AWS infrastructure",
+          "Implemented secure patient data handling"
+        ]}
+      />
+    </group>
+  )
+}
+
+function NatureScene() {
+  return (
+    <>
+      <FloatingCard 
+        position={[0, 2, 5]} 
+        rotation={[0, 0, 0]}
+        scale={1.2}
+      >
+        <div />
+      </FloatingCard>
+      <ExperienceSection />
+      <PathStones />
+      <GrassField />
+      <Mountains position={[0, 0, 400]} />
+      <Mountains position={[0, 0, 600]} />
+    </>
+  )
+}
+
+/**
+ * Camera parent-group – we'll slide it forward as you scroll.
+ */
+function RideCameraRig({ children }: { children: React.ReactNode }) {
+  const group = useRef<THREE.Group>(null!)
+  const scroll = useScroll()
+
+  useFrame(() => {
+    const z = scroll.offset * CORRIDOR_LEN
+    const y = -1.5 + scroll.offset * -3
+
+    group.current.position.z = z
+    group.current.position.y = y
+  })
+
+  return (
+    <group ref={group} rotation={[0, Math.PI, 0]}>
+      {children}
+    </group>
+  )
+}
+
+
+export default function ScrollThroughBlocks() {
+  return (
+    <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600">
+      {/* Fixed overlay that won't move with scroll */}
+      <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50">
+        <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Mountain Path</h2>
+        <ul className="text-sm space-y-1 list-disc list-inside opacity-90">
+          <li>Scroll to explore</li>
+          <li>Drag to look around</li>
+        </ul>
       </div>
 
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-slate-900/80 backdrop-blur-sm z-50 border-b border-blue-800/30">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="w-6 h-6 text-blue-400" />
-              <span className="font-bold text-xl">DataPortfolio</span>
-            </div>
-            <div className="hidden md:flex gap-6">
-              <Link href="#about" className="hover:text-blue-400 transition-colors">
-                About
-              </Link>
-              <Link href="#experience" className="hover:text-blue-400 transition-colors">
-                Experience
-              </Link>
-              <Link href="#projects" className="hover:text-blue-400 transition-colors">
-                Projects
-              </Link>
-              <Link href="#contact" className="hover:text-blue-400 transition-colors">
-                Contact
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
+        <color attach="background" args={['#93c5fd']} /> {/* soft blue sky */}
+        <fog attach="fog" args={['#bfdbfe', 120, 1000]} /> {/* light blue fog for depth */}
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="mb-8">
-            <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 p-1">
-              <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
-                <Brain className="w-16 h-16 text-blue-400" />
-              </div>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Alex Chen
-            </h1>
-            <p className="text-xl md:text-2xl text-blue-200 mb-2">Data Scientist & Researcher</p>
-            <div className="flex items-center justify-center gap-2 text-blue-300">
-              <MapPin className="w-4 h-4" />
-              <span>University of Michigan, Ann Arbor</span>
-            </div>
-          </div>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed">
-            Passionate about transforming complex data into actionable insights. Specializing in machine learning,
-            statistical modeling, and data visualization to solve real-world problems in healthcare, climate science,
-            and beyond.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <Mail className="w-4 h-4 mr-2" />
-              Get In Touch
-            </Button>
-            <Button variant="outline" className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white">
-              <Github className="w-4 h-4 mr-2" />
-              View GitHub
-            </Button>
-          </div>
-        </div>
-      </section>
+        <ambientLight intensity={0.4} color="#e0f2fe" /> {/* cool ambient light */}
+        <directionalLight position={[5, 8, -5]} intensity={1.2} color="#60a5fa" /> {/* main blue light */}
+        <directionalLight position={[-4, 6, -5]} intensity={0.4} color="#93c5fd" /> {/* soft blue fill */}
 
-      {/* About Section */}
-      <section id="about" className="py-20 px-4 relative">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16 text-blue-400">About Me</h2>
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                I'm a data scientist with a passion for uncovering patterns in complex datasets and building predictive
-                models that drive meaningful impact. Currently pursuing my PhD at the University of Michigan, I focus on
-                applying machine learning techniques to healthcare and environmental challenges.
-              </p>
-              <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                My journey in data science began with a fascination for statistics and programming. Over the years, I've
-                developed expertise in various domains, from natural language processing to computer vision, always with
-                an eye toward practical applications that benefit society.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="bg-blue-900/50 text-blue-200">
-                  PhD Candidate
-                </Badge>
-                <Badge variant="secondary" className="bg-blue-900/50 text-blue-200">
-                  Published Researcher
-                </Badge>
-                <Badge variant="secondary" className="bg-blue-900/50 text-blue-200">
-                  ML Engineer
-                </Badge>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <h3 className="text-2xl font-semibold text-blue-400 mb-4">Technical Skills</h3>
-              {skills.map((skill, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">{skill.name}</span>
-                    <span className="text-blue-400">{skill.level}%</span>
-                  </div>
-                  <Progress value={skill.level} className="h-2 bg-slate-700" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+        <Environment preset="dawn" /> {/* brighter, cooler lighting */}
+        <OrbitControls 
+          enableZoom={false} 
+          enablePan={false} 
+          maxPolarAngle={Math.PI} 
+          rotateSpeed={-0.3}
+        />
 
-      {/* Experience Section */}
-      <section id="experience" className="py-20 px-4 bg-slate-800/30 relative">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16 text-blue-400">Work Experience</h2>
-          <div className="space-y-8">
-            {experiences.map((exp, index) => (
-              <Card key={index} className="bg-slate-800/50 border-blue-800/30 backdrop-blur-sm">
-                <CardHeader>
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                      <CardTitle className="text-xl text-blue-400">{exp.title}</CardTitle>
-                      <CardDescription className="text-lg text-gray-300">{exp.company}</CardDescription>
-                    </div>
-                    <Badge variant="outline" className="border-blue-400 text-blue-400 w-fit">
-                      {exp.period}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 mb-4">{exp.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {exp.technologies.map((tech, techIndex) => (
-                      <Badge key={techIndex} variant="secondary" className="bg-blue-900/30 text-blue-200">
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section id="projects" className="py-20 px-4 relative">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-16 text-blue-400">Featured Projects</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            {projects.map((project, index) => (
-              <Card
-                key={index}
-                className="bg-slate-800/50 border-blue-800/30 backdrop-blur-sm hover:bg-slate-800/70 transition-all duration-300"
-              >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-xl text-blue-400 mb-2">{project.title}</CardTitle>
-                      <CardDescription className="text-gray-300">{project.description}</CardDescription>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="icon" variant="ghost" className="text-blue-400 hover:text-blue-300">
-                        <Github className="w-4 h-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" className="text-blue-400 hover:text-blue-300">
-                        <ExternalLink className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                      {project.technologies.map((tech, techIndex) => (
-                        <Badge key={techIndex} variant="secondary" className="bg-blue-900/30 text-blue-200">
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2 text-green-400">
-                      <TrendingUp className="w-4 h-4" />
-                      <span className="text-sm font-medium">{project.impact}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 bg-slate-800/30 relative">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-8 text-blue-400">Let's Connect</h2>
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
-            I'm always interested in discussing new opportunities, research collaborations, or just chatting about the
-            latest developments in data science.
-          </p>
-          <div className="flex flex-wrap justify-center gap-6">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-              <Mail className="w-5 h-5 mr-2" />
-              alex.chen@umich.edu
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white"
-            >
-              <Linkedin className="w-5 h-5 mr-2" />
-              LinkedIn
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white"
-            >
-              <Github className="w-5 h-5 mr-2" />
-              GitHub
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-blue-800/30">
-        <div className="max-w-6xl mx-auto text-center text-gray-400">
-          <p>&copy; 2024 Alex Chen. Built with passion for data and design.</p>
-        </div>
-      </footer>
+        <ScrollControls pages={4} damping={0.15}>
+          <Scroll>
+            <RideCameraRig>
+              <NatureScene />
+            </RideCameraRig>
+          </Scroll>
+        </ScrollControls>
+      </Canvas>
     </div>
   )
 }
