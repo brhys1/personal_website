@@ -636,7 +636,7 @@ function RideCameraRig({ children }: { children: React.ReactNode }) {
 
 export default function ScrollThroughBlocks() {
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600 touch-auto">
+    <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600 touch-auto overflow-hidden">
       {/* Fixed overlay that won't move with scroll */}
       <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50">
         <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Mountain Path</h2>
@@ -645,8 +645,6 @@ export default function ScrollThroughBlocks() {
           <li>Drag to look around</li>
         </ul>
       </div>
-
-      <ScrollIndicator />
 
       <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
         <color attach="background" args={['#93c5fd']} />
