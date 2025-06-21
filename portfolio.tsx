@@ -93,15 +93,19 @@ function Forest() {
 }
 
 function PathStones() {
+  const isMobile = useIsMobile()
+  // Adjust initial stone position for mobile
+  const initialZ = isMobile ? 10 : 0
+
   // Memoize the stone positions and rotations
   const stones = useMemo(() => {
     return Array.from({ length: 40 }, (_, i) => {
       const x = Math.sin(i * 0.3) * 2
       const rotation = Math.random() * Math.PI
       const scale = 0.8 + Math.random() * 0.4
-      return { x, z: i * 4, rotation, scale }
+      return { x, z: initialZ + i * 4, rotation, scale }
     })
-  }, []) // Empty dependency array since stones don't change
+  }, [initialZ]) // Dependency on initialZ
 
   return (
     <group>
@@ -559,53 +563,56 @@ function ExperienceSection() {
 }
 
 function IntroCard() {
+  const isMobile = useIsMobile()
+  const position: [number, number, number] = isMobile ? [0, 2, 15] : [0, 2, 5]  // Move further back on mobile
+
   return (
-  <group position={[0, 2, 5]} rotation={[0, Math.PI, 0]}>
-        {/* Background panel */}
-        <mesh position={[0, 0, -0.1]}>
-          <planeGeometry args={[12, 8]} />
-          <meshStandardMaterial color="#ffffff" transparent opacity={0.9} />
-        </mesh>
-        
-        {/* Title */}
-        <Text
-          position={[0, 1.5, 0]}
-          fontSize={0.8}
-          color="#2563eb"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={8}
-        >
-          Rhys Burman
-        </Text>
+    <group position={position} rotation={[0, Math.PI, 0]}>
+      {/* Background panel */}
+      <mesh position={[0, 0, -0.1]}>
+        <planeGeometry args={[12, 8]} />
+        <meshStandardMaterial color="#ffffff" transparent opacity={0.9} />
+      </mesh>
+      
+      {/* Title */}
+      <Text
+        position={[0, 1.5, 0]}
+        fontSize={0.8}
+        color="#2563eb"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={8}
+      >
+        Rhys Burman
+      </Text>
 
-        {/* Subtitle */}
-        <Text
-          position={[0, 0.5, 0]}
-          fontSize={0.4}
-          color="#3b82f6"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={8}
-        >
-          Data Science & Sustainability
-        </Text>
+      {/* Subtitle */}
+      <Text
+        position={[0, 0.5, 0]}
+        fontSize={0.4}
+        color="#3b82f6"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={8}
+      >
+        Data Science & Sustainability
+      </Text>
 
-        {/* Description */}
-        <Text
-          position={[0, -0.5, 0]}
-          fontSize={0.25}
-          color="#64748b"
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={8}
-          textAlign="center"
-        >
-          Welcome to my digital space where data science{"\n"}
-          meets sustainability. I'm passionate about leveraging{"\n"}
-          data-driven solutions to tackle environmental challenges.
-        </Text>
-      </group>
+      {/* Description */}
+      <Text
+        position={[0, -0.5, 0]}
+        fontSize={0.25}
+        color="#64748b"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={8}
+        textAlign="center"
+      >
+        Welcome to my digital space where data science{"\n"}
+        meets sustainability. I'm passionate about leveraging{"\n"}
+        data-driven solutions to tackle environmental challenges.
+      </Text>
+    </group>
   )
 }
 
@@ -698,7 +705,7 @@ export default function Portfolio() {
         </ul>
       </div>
 
-      <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
+      <Canvas camera={{ position: [0, 1, isMobile ? 10 : 0], fov: 75 }}>
         <color attach="background" args={['#93c5fd']} />
         <fog attach="fog" args={['#bfdbfe', 120, 1000]} />
         <ambientLight intensity={0.4} color="#e0f2fe" />
