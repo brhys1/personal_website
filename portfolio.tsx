@@ -677,15 +677,22 @@ export default function Portfolio() {
 
   return (
     <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600">
-      {/* Fixed overlay that won't move with scroll */}
-      <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50">
-        <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">My World</h2>
-        <ul className="text-sm space-y-1 list-disc list-inside opacity-90">
+     <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 select-none"
+          style={{
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            msUserSelect: "none"
+          }}
+      >
+        <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          My World
+        </h2>
+        <ul className="text-sm space-y-1 list-disc list-inside opacity-90 select-none">
           {!isMobile ? (
-           <>
-            <li>Scroll to explore</li>
-            <li>Drag to look around</li>
-          </>
+            <>
+              <li>Scroll to explore</li>
+              <li>Drag to look around</li>
+            </>
           ) : null}
         </ul>
       </div>
