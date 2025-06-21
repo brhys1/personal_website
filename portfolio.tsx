@@ -634,7 +634,16 @@ function RideCameraRig({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default function ScrollThroughBlocks() {
+function ScrollUpdater({ setScrollProgress }: { setScrollProgress: (v: number) => void }) {
+  const scroll = useScroll()
+  useFrame(() => {
+    setScrollProgress(scroll.offset)
+  })
+  return null
+}
+
+export default function Portfolio() {
+  const [scrollProgress, setScrollProgress] = useState(0)
   return (
     <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600 touch-auto overflow-hidden">
       {/* Fixed overlay that won't move with scroll */}
@@ -646,6 +655,8 @@ export default function ScrollThroughBlocks() {
         </ul>
       </div>
 
+      <ScrollIndicator progress={scrollProgress} />
+
       <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
         <color attach="background" args={['#93c5fd']} />
         <fog attach="fog" args={['#bfdbfe', 120, 1000]} />
@@ -655,9 +666,10 @@ export default function ScrollThroughBlocks() {
         <Environment preset="dawn" />
         <OrbitControls 
           enableZoom={false} 
-          enablePan={false} 
+          enablePan={false}
           maxPolarAngle={Math.PI} 
           rotateSpeed={-0.3}
+          enableDamping={true}
         />
         <ScrollControls pages={4} damping={0.15}>
           <Scroll>
@@ -665,6 +677,7 @@ export default function ScrollThroughBlocks() {
               <NatureScene />
             </RideCameraRig>
           </Scroll>
+          <ScrollUpdater setScrollProgress={setScrollProgress} />
         </ScrollControls>
       </Canvas>
     </div>
