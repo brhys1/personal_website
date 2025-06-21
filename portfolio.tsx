@@ -676,9 +676,15 @@ export default function Portfolio() {
   }, [isMobile, isMovingForward, isMovingBackward])
 
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600">
+    <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600 select-none"
+      style={{
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            msUserSelect: "none"
+          }}
+      >
      <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 select-none"
-          style={{
+      style={{
             userSelect: "none",
             WebkitUserSelect: "none",
             msUserSelect: "none"
