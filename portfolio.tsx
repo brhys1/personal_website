@@ -5,13 +5,13 @@ import { ScrollControls, Scroll, useScroll, OrbitControls, Environment, Text, Pl
 import { useRef, useState, useEffect, useMemo, memo } from "react"
 import * as THREE from "three"
 import { group } from "console"
-import { ScrollIndicator } from "@/components/ui/scroll-indicator"
-import { ScrollProgressBridge } from "@/components/ui/scroll-progress-bridge"
+import { useIsMobile } from "./hooks/use-mobile"
 
 const BLOCK_COUNT = 40      // how many blocks to spawn
 const SPACING      = 6      // distance (z) between blocks
 const CORRIDOR_LEN = BLOCK_COUNT * SPACING   // used to map scroll → distance
 const cameraYRef = { current: 0 }
+const SCROLL_STEP = 0.1 // Amount to move forward/backward on button press
 
 const TEXT_COLORS = {
   company: "#1e40af", // dark blue
@@ -26,58 +26,6 @@ const TEXT_COLORS = {
 
 
 // 3D Scene Components
-function FloatingCard({ 
-  position, 
-  rotation, 
-  children, 
-  scale = 1 
-}: { 
-  position: THREE.Vector3Tuple
-  rotation: THREE.Vector3Tuple
-  children: React.ReactNode
-  scale?: number 
-}) {
-  const meshRef = useRef<THREE.Mesh>(null)
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      // Gentler floating motion
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.1
-      // Remove rotation animation to debug the base rotation
-    }
-  })
-
-  return (
-    <group position={position} rotation={rotation} scale={scale}>
-      <mesh ref={meshRef}>
-        <planeGeometry args={[8, 6]} />
-        <meshStandardMaterial transparent opacity={0.05} color="#1e40af" />
-        <Html
-          transform
-          occlude
-          rotation={[0, 3.14, 0]}
-          position={[0, 0, 5]}
-          style={{
-            pointerEvents: "auto"
-          }}
-        >
-          <div className="w-[90vw] max-w-md h-auto bg-white/95 backdrop-blur-sm border border-blue-200 rounded-lg shadow-lg p-6 sm:p-8 flex flex-col items-center justify-center text-center">
-            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-              Rhys Burman
-            </h1>
-            <h2 className="text-2xl text-blue-600 mb-6">Data Science & Sustainability</h2>
-            <p className="text-lg text-gray-700 mb-8 max-w-2xl">
-              Welcome to my digital space where data science meets sustainability. 
-              I'm passionate about leveraging data-driven solutions to tackle environmental challenges 
-              and create a more sustainable future.
-            </p>
-          </div>
-        </Html>
-      </mesh>
-    </group>
-  )
-}
-
 function Mountains({ position }: { position: THREE.Vector3Tuple }) {
   // Memoize the mountain meshes to prevent regeneration on scroll
   const mountainMeshes = useMemo(() => {
@@ -610,20 +558,65 @@ function ExperienceSection() {
   )
 }
 
+function IntroCard() {
+  return (
+  <group position={[0, 2, 5]} rotation={[0, Math.PI, 0]}>
+        {/* Background panel */}
+        <mesh position={[0, 0, -0.1]}>
+          <planeGeometry args={[12, 8]} />
+          <meshStandardMaterial color="#ffffff" transparent opacity={0.9} />
+        </mesh>
+        
+        {/* Title */}
+        <Text
+          position={[0, 1.5, 0]}
+          fontSize={0.8}
+          color="#2563eb"
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={8}
+        >
+          Rhys Burman
+        </Text>
+
+        {/* Subtitle */}
+        <Text
+          position={[0, 0.5, 0]}
+          fontSize={0.4}
+          color="#3b82f6"
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={8}
+        >
+          Data Science & Sustainability
+        </Text>
+
+        {/* Description */}
+        <Text
+          position={[0, -0.5, 0]}
+          fontSize={0.25}
+          color="#64748b"
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={8}
+          textAlign="center"
+        >
+          Welcome to my digital space where data science{"\n"}
+          meets sustainability. I'm passionate about leveraging{"\n"}
+          data-driven solutions to tackle environmental challenges.
+        </Text>
+      </group>
+  )
+}
+
 // Memoize the entire NatureScene to prevent unnecessary re-renders
 const NatureScene = memo(function NatureScene() {
   return (
     <>
-      <FloatingCard 
-        position={[0, 2, 5]} 
-        rotation={[0, 0, 0]}
-        scale={1.2}
-      >
-        <div />
-      </FloatingCard>
+      <IntroCard/>
       <ExperienceSection />
       <PathStones />
-      <Forest />
+      <Forest/>
       <Mountains position={[0, 0, 400]} />
       <Mountains position={[0, 0, 600]} />
     </>
@@ -636,14 +629,44 @@ const NatureScene = memo(function NatureScene() {
 function RideCameraRig({ children }: { children: React.ReactNode }) {
   const group = useRef<THREE.Group>(null!)
   const scroll = useScroll()
+  const [manualOffset, setManualOffset] = useState(0)
+  const isMobile = useIsMobile()
 
   useFrame(() => {
-    const z = scroll.offset * CORRIDOR_LEN
-    const y = -1.5 + scroll.offset * -3
+    const offset = isMobile ? manualOffset : scroll.offset
+    const z = offset * CORRIDOR_LEN
+    const y = -1.5 + offset * -3
 
     group.current.position.z = z
     group.current.position.y = y
   })
+
+  // Add mobile navigation buttons
+  if (isMobile) {
+    return (
+      <>
+        <group ref={group} rotation={[0, Math.PI, 0]}>
+          {children}
+        </group>
+        <Html fullscreen>
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-4 z-50">
+            <button
+              className="px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors"
+              onClick={() => setManualOffset(prev => Math.max(0, prev - SCROLL_STEP))}
+            >
+              ← Back
+            </button>
+            <button
+              className="px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors"
+              onClick={() => setManualOffset(prev => Math.min(1, prev + SCROLL_STEP))}
+            >
+              Forward →
+            </button>
+          </div>
+        </Html>
+      </>
+    )
+  }
 
   return (
     <group ref={group} rotation={[0, Math.PI, 0]}>
@@ -653,19 +676,27 @@ function RideCameraRig({ children }: { children: React.ReactNode }) {
 }
 
 export default function Portfolio() {
-  const [scrollProgress, setScrollProgress] = useState(0)
+  const isMobile = useIsMobile()
+
   return (
     <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600">
       {/* Fixed overlay that won't move with scroll */}
       <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50">
         <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Mountain Path</h2>
         <ul className="text-sm space-y-1 list-disc list-inside opacity-90">
-          <li>Scroll to explore</li>
-          <li>Drag to look around</li>
+          {isMobile ? (
+            <>
+              <li>Use buttons to move</li>
+              <li>Drag to look around</li>
+            </>
+          ) : (
+            <>
+              <li>Scroll to explore</li>
+              <li>Drag to look around</li>
+            </>
+          )}
         </ul>
       </div>
-
-      <ScrollIndicator progress={scrollProgress} />
 
       <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
         <color attach="background" args={['#93c5fd']} />
@@ -681,14 +712,18 @@ export default function Portfolio() {
           rotateSpeed={-0.3}
           enableDamping={true}
         />
-        <ScrollControls pages={4} damping={0.15}>
+        <ScrollControls pages={4} damping={0.15} enabled={!isMobile}>
           <Scroll>
             <RideCameraRig>
               <NatureScene />
             </RideCameraRig>
           </Scroll>
-          <ScrollProgressBridge setProgress={setScrollProgress} />
         </ScrollControls>
+        {isMobile && (
+          <RideCameraRig>
+            <NatureScene />
+          </RideCameraRig>
+        )}
       </Canvas>
     </div>
   )
