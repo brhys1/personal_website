@@ -2,9 +2,10 @@
 
 import { Canvas, useFrame } from "@react-three/fiber"
 import { ScrollControls, Scroll, useScroll, OrbitControls, Environment, Text, Plane, Html } from "@react-three/drei"
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import * as THREE from "three"
 import { group } from "console"
+import { ScrollIndicator } from "@/components/ui/scroll-indicator"
 
 const BLOCK_COUNT = 40      // how many blocks to spawn
 const SPACING      = 6      // distance (z) between blocks
@@ -633,7 +634,6 @@ function RideCameraRig({ children }: { children: React.ReactNode }) {
   )
 }
 
-
 export default function ScrollThroughBlocks() {
   return (
     <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600 touch-auto">
@@ -646,22 +646,21 @@ export default function ScrollThroughBlocks() {
         </ul>
       </div>
 
+      <ScrollIndicator />
+
       <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
-        <color attach="background" args={['#93c5fd']} /> {/* soft blue sky */}
-        <fog attach="fog" args={['#bfdbfe', 120, 1000]} /> {/* light blue fog for depth */}
-
-        <ambientLight intensity={0.4} color="#e0f2fe" /> {/* cool ambient light */}
-        <directionalLight position={[5, 8, -5]} intensity={1.2} color="#60a5fa" /> {/* main blue light */}
-        <directionalLight position={[-4, 6, -5]} intensity={0.4} color="#93c5fd" /> {/* soft blue fill */}
-
-        <Environment preset="dawn" /> {/* brighter, cooler lighting */}
+        <color attach="background" args={['#93c5fd']} />
+        <fog attach="fog" args={['#bfdbfe', 120, 1000]} />
+        <ambientLight intensity={0.4} color="#e0f2fe" />
+        <directionalLight position={[5, 8, -5]} intensity={1.2} color="#60a5fa" />
+        <directionalLight position={[-4, 6, -5]} intensity={0.4} color="#93c5fd" />
+        <Environment preset="dawn" />
         <OrbitControls 
           enableZoom={false} 
           enablePan={false} 
           maxPolarAngle={Math.PI} 
           rotateSpeed={-0.3}
         />
-
         <ScrollControls pages={4} damping={0.15}>
           <Scroll>
             <RideCameraRig>
