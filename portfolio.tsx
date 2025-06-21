@@ -1,15 +1,16 @@
 "use client"
 
+import type React from "react"
+
 import { Canvas, useFrame } from "@react-three/fiber"
-import { ScrollControls, Scroll, useScroll, OrbitControls, Environment, Text, Plane, Html } from "@react-three/drei"
+import { ScrollControls, Scroll, useScroll, OrbitControls, Environment, Text, Plane } from "@react-three/drei"
 import { useRef, useState, useEffect, useMemo, memo } from "react"
 import * as THREE from "three"
-import { group } from "console"
 import { useIsMobile } from "./hooks/use-mobile"
 
-const BLOCK_COUNT = 40      // how many blocks to spawn
-const SPACING      = 6      // distance (z) between blocks
-const CORRIDOR_LEN = BLOCK_COUNT * SPACING   // used to map scroll → distance
+const BLOCK_COUNT = 40 // how many blocks to spawn
+const SPACING = 6 // distance (z) between blocks
+const CORRIDOR_LEN = BLOCK_COUNT * SPACING // used to map scroll → distance
 const SCROLL_STEP = 0.1 // Amount to move forward/backward on button press
 const MIN_OFFSET = 0
 const MAX_OFFSET = 1
@@ -17,15 +18,14 @@ const cameraYRef = { current: 0 }
 
 const TEXT_COLORS = {
   company: "#1e40af", // dark blue
-  title: "#3b82f6",  // medium blue
-  content: "#1f2937"  // dark gray
+  title: "#3b82f6", // medium blue
+  content: "#1f2937", // dark gray
 } as const
 
 /**
  * One long row of alternating blocks you'll fly THROUGH.
  * Blocks sit just off-centre so the camera path stays clear.
  */
-
 
 // 3D Scene Components
 function Mountains({ position }: { position: THREE.Vector3Tuple }) {
@@ -35,7 +35,7 @@ function Mountains({ position }: { position: THREE.Vector3Tuple }) {
     const mtns = Math.floor(-position[2] / 70 + 16)
 
     return Array.from({ length: mtns }, (_, i) => {
-      const x = -800 + (i * 1600 / (mtns - 1))
+      const x = -800 + (i * 1600) / (mtns - 1)
       const coneHeight = z + Math.random() * 30
       const color = `hsl(${200 + Math.random() * 40}, 35%, ${50 + Math.random() * 20}%)`
       return { x, height: coneHeight, color }
@@ -118,16 +118,19 @@ function PathStones() {
           {i === 0 && (
             <group position={[stone.x, 0, stone.z]}>
               <mesh position={[0, 0, 1]} rotation={[-Math.PI / 2, 0, Math.PI]} scale={isMobile ? 0.7 : 1}>
-                <shapeGeometry args={[new THREE.Shape()
-                  .moveTo(-0.25, 0)      // Start at base left
-                  .lineTo(0.25, 0)       // Base right
-                  .lineTo(0.25, 0.5)     // Shaft right
-                  .lineTo(0.5, 0.5)      // Arrow head base right
-                  .lineTo(0, 1)          // Arrow head tip
-                  .lineTo(-0.5, 0.5)     // Arrow head base left
-                  .lineTo(-0.25, 0.5)    // Shaft left
-                  .lineTo(-0.25, 0)      // Back to start
-                ]} />
+                <shapeGeometry
+                  args={[
+                    new THREE.Shape()
+                      .moveTo(-0.25, 0) // Start at base left
+                      .lineTo(0.25, 0) // Base right
+                      .lineTo(0.25, 0.5) // Shaft right
+                      .lineTo(0.5, 0.5) // Arrow head base right
+                      .lineTo(0, 1) // Arrow head tip
+                      .lineTo(-0.5, 0.5) // Arrow head base left
+                      .lineTo(-0.25, 0.5) // Shaft left
+                      .lineTo(-0.25, 0), // Back to start
+                  ]}
+                />
                 <meshStandardMaterial color={TEXT_COLORS.company} />
               </mesh>
               <Text
@@ -158,18 +161,21 @@ interface ExperienceDisplayProps {
   logoPlaceholder?: boolean
 }
 
-function ExperienceDisplay({ position, rotation, title, company, impact, logoPlaceholder = true }: ExperienceDisplayProps) {
+function ExperienceDisplay({
+  position,
+  rotation,
+  title,
+  company,
+  impact,
+  logoPlaceholder = true,
+}: ExperienceDisplayProps) {
   const groupRef = useRef<THREE.Group>(null)
   const platformColor = "#60a5fa"
-  
+
   useFrame((state) => {
     if (groupRef.current) {
       const floatY = Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.1
-      groupRef.current.position.set(
-        position[0],
-        cameraYRef.current + floatY,
-        position[2]
-      )
+      groupRef.current.position.set(position[0], cameraYRef.current + floatY, position[2])
     }
   })
 
@@ -213,20 +219,21 @@ function ExperienceDisplay({ position, rotation, title, company, impact, logoPla
         </Text>
 
         {/* Impact bullets */}
-        {Array.isArray(impact) && impact.map((point, index) => (
-          <Text
-            key={index}
-            position={[-1.8, 1 - index * 0.4, 0]}
-            fontSize={0.18}
-            color={TEXT_COLORS.content}
-            anchorX="left"
-            anchorY="middle"
-            maxWidth={3.4}
-            lineHeight={1.2}
-          >
-            • {point}
-          </Text>
-        ))}
+        {Array.isArray(impact) &&
+          impact.map((point, index) => (
+            <Text
+              key={index}
+              position={[-1.8, 1 - index * 0.4, 0]}
+              fontSize={0.18}
+              color={TEXT_COLORS.content}
+              anchorX="left"
+              anchorY="middle"
+              maxWidth={3.4}
+              lineHeight={1.2}
+            >
+              • {point}
+            </Text>
+          ))}
       </group>
 
       {/* Particle effect */}
@@ -234,7 +241,14 @@ function ExperienceDisplay({ position, rotation, title, company, impact, logoPla
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            args={[Float32Array.from(Array(300).fill(0).map(() => (Math.random() - 0.5) * 4)), 3]}
+            args={[
+              Float32Array.from(
+                Array(300)
+                  .fill(0)
+                  .map(() => (Math.random() - 0.5) * 4),
+              ),
+              3,
+            ]}
           />
         </bufferGeometry>
         <pointsMaterial size={0.02} color={platformColor} transparent opacity={0.4} />
@@ -243,19 +257,125 @@ function ExperienceDisplay({ position, rotation, title, company, impact, logoPla
   )
 }
 
-function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple, rotation: THREE.Vector3Tuple }) {
+interface ProjectDisplayProps {
+  position: THREE.Vector3Tuple
+  rotation: THREE.Vector3Tuple
+  title: string
+  description: string
+  technologies: string[]
+  highlights: string[]
+}
+
+function ProjectDisplay({ position, rotation, title, description, technologies, highlights }: ProjectDisplayProps) {
   const groupRef = useRef<THREE.Group>(null)
-  const primaryColor = "#2563eb"  // blue-600
+  const platformColor = "#10b981" // emerald-500 for projects
+
+  useFrame((state) => {
+    if (groupRef.current) {
+      const floatY = Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.1
+      groupRef.current.position.set(position[0], cameraYRef.current + floatY, position[2])
+    }
+  })
+
+  return (
+    <group rotation={rotation} ref={groupRef}>
+      <group position={[0, 1.5, 0]}>
+        {/* Project icon/placeholder */}
+        <mesh position={[0, 4.5, 0]}>
+          <boxGeometry args={[4, 1, 0.2]} />
+          <meshStandardMaterial color="#34d399" />
+        </mesh>
+
+        <mesh position={[0, 0.4, -0.05]}>
+          <planeGeometry args={[5.5, 10]} />
+          <meshStandardMaterial color="white" transparent opacity={1} />
+        </mesh>
+
+        {/* Project Title */}
+        <Text
+          position={[0, 3, 0]}
+          fontSize={0.4}
+          color="#059669" // emerald-700
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4}
+        >
+          {title}
+        </Text>
+
+        {/* Description */}
+        <Text
+          position={[0, 2.2, 0]}
+          fontSize={0.2}
+          color={TEXT_COLORS.title}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4.5}
+          textAlign="center"
+        >
+          {description}
+        </Text>
+
+        {/* Technologies */}
+        <Text
+          position={[0, 1.6, 0]}
+          fontSize={0.15}
+          color="#6b7280" // gray-500
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4.5}
+          textAlign="center"
+        >
+          {technologies.join(" • ")}
+        </Text>
+
+        {/* Highlights */}
+        {highlights.map((highlight, index) => (
+          <Text
+            key={index}
+            position={[-1.8, 0.8 - index * 0.4, 0]}
+            fontSize={0.18}
+            color={TEXT_COLORS.content}
+            anchorX="left"
+            anchorY="middle"
+            maxWidth={3.4}
+            lineHeight={1.2}
+          >
+            • {highlight}
+          </Text>
+        ))}
+      </group>
+
+      {/* Particle effect with different color */}
+      <points>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            args={[
+              Float32Array.from(
+                Array(300)
+                  .fill(0)
+                  .map(() => (Math.random() - 0.5) * 4),
+              ),
+              3,
+            ]}
+          />
+        </bufferGeometry>
+        <pointsMaterial size={0.02} color={platformColor} transparent opacity={0.4} />
+      </points>
+    </group>
+  )
+}
+
+function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; rotation: THREE.Vector3Tuple }) {
+  const groupRef = useRef<THREE.Group>(null)
+  const primaryColor = "#2563eb" // blue-600
   const bgColor = "#ffffff"
-  
+
   useFrame((state) => {
     if (groupRef.current) {
       const floatY = Math.sin(state.clock.elapsedTime * 0.5) * 0.1
-      groupRef.current.position.set(
-        position[0],
-        cameraYRef.current + floatY,
-        position[2]
-      )
+      groupRef.current.position.set(position[0], cameraYRef.current + floatY, position[2])
     }
   })
 
@@ -327,11 +447,7 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple, ro
         </Text>
 
         <group position={[0, -1.2, 0]}>
-          {[
-            "Python • ML • AWS",
-            "Sustainability • Analytics",
-            "Full Stack • Data Engineering"
-          ].map((text, idx) => (
+          {["Python • ML • AWS", "Sustainability • Analytics", "Full Stack • Data Engineering"].map((text, idx) => (
             <Text
               key={idx}
               position={[0, -idx * 0.3, 0]}
@@ -350,35 +466,31 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple, ro
   )
 }
 
-function InterestPedestal({ 
-  position, 
-  rotation, 
-  icon, 
-  label 
-}: { 
-  position: THREE.Vector3Tuple, 
-  rotation: THREE.Vector3Tuple,
-  icon: "soccer" | "book" | "map" | "cards",
+function InterestPedestal({
+  position,
+  rotation,
+  icon,
+  label,
+}: {
+  position: THREE.Vector3Tuple
+  rotation: THREE.Vector3Tuple
+  icon: "soccer" | "book" | "map" | "cards"
   label: string
 }) {
   const groupRef = useRef<THREE.Group>(null)
   const platformColor = "#60a5fa"
   const time = useRef(0)
-  
+
   useFrame((state) => {
     time.current = state.clock.elapsedTime
     if (groupRef.current) {
       const floatY = Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.1
-      groupRef.current.position.set(
-        position[0],
-        cameraYRef.current + floatY,
-        position[2]
-      )
+      groupRef.current.position.set(position[0], cameraYRef.current + floatY, position[2])
     }
   })
 
   const renderIcon = () => {
-    switch(icon) {
+    switch (icon) {
       case "soccer":
         return (
           <mesh position={[0, 2, 0]} rotation={[0, time.current * 0.5, 0]}>
@@ -421,7 +533,7 @@ function InterestPedestal({
           <group position={[0, 2, 0]} rotation={[0.2, time.current * 0.3, 0]}>
             {/* Multiple cards fanned out */}
             {[0, 1, 2].map((i) => (
-              <mesh key={i} position={[i * 0.1, i * 0.05, 0]} rotation={[0, Math.PI/2, i * 0.2]}>
+              <mesh key={i} position={[i * 0.1, i * 0.05, 0]} rotation={[0, Math.PI / 2, i * 0.2]}>
                 <boxGeometry args={[0.7, 1, 0.01]} />
                 <meshStandardMaterial color="red" />
               </mesh>
@@ -438,7 +550,7 @@ function InterestPedestal({
         <cylinderGeometry args={[1, 1.2, 0.2, 8]} />
         <meshStandardMaterial color={platformColor} />
       </mesh>
-      
+
       {/* Light beam */}
       <mesh position={[0, 1, 0]}>
         <cylinderGeometry args={[0.1, 1, 2, 8, 1, true]} />
@@ -472,35 +584,41 @@ function InterestPedestal({
 function ExperienceSection() {
   return (
     <group position={[0, 0, 75]}>
+      {/* "Experiences" text on the ground */}
+      <Text
+        position={[-15, -1, 15]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        fontSize={2}
+        color={TEXT_COLORS.company}
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={20}
+        fontWeight={700}
+      >
+        EXPERIENCES
+      </Text>
+
       {/* Personal Description */}
-      <PersonalCard
-        position={[8, 0, -50]}
-        rotation={[0, Math.PI/3 + Math.PI, 0]}
-      />
+      <PersonalCard position={[8, 0, -50]} rotation={[0, Math.PI / 3 + Math.PI, 0]} />
 
       {/* Interest Pedestals */}
       <group position={[8, 0, -35]}>
-        <InterestPedestal
-          position={[-2, 0, 0]}
-          rotation={[0, Math.PI/6 + Math.PI, 0]}
-          icon="soccer"
-          label="Soccer"
-        />
+        <InterestPedestal position={[-2, 0, 0]} rotation={[0, Math.PI / 6 + Math.PI, 0]} icon="soccer" label="Soccer" />
         <InterestPedestal
           position={[-14, 0, 0]}
-          rotation={[0, -Math.PI/6 + Math.PI, 0]}
+          rotation={[0, -Math.PI / 6 + Math.PI, 0]}
           icon="book"
           label="Harry Potter"
         />
         <InterestPedestal
           position={[-14, 0, 6]}
-          rotation={[0, -Math.PI/6 + Math.PI, 0]}
+          rotation={[0, -Math.PI / 6 + Math.PI, 0]}
           icon="map"
           label="Geography"
         />
         <InterestPedestal
           position={[-2, 0, 6]}
-          rotation={[0, Math.PI/6 + Math.PI, 0]}
+          rotation={[0, Math.PI / 6 + Math.PI, 0]}
           icon="cards"
           label="Card Games"
         />
@@ -509,52 +627,126 @@ function ExperienceSection() {
       {/* Clear Estimates */}
       <ExperienceDisplay
         position={[-8, 0, 0]}
-        rotation={[0, -Math.PI/3 + Math.PI, 0]}
+        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
         company="Clear Estimates"
         title="Lead Data Scientist"
         impact={[
           "Built price scraper covering 350+ locations, 90% faster",
           "Analyzed 28M rows to improve accuracy by 21%",
-          "Developed AI-powered contractor leads platform"
+          "Developed AI-powered contractor leads platform",
         ]}
       />
 
       {/* Delta Airlines */}
       <ExperienceDisplay
         position={[8, 0, 10]}
-        rotation={[0, Math.PI/3 + Math.PI, 0]}
+        rotation={[0, Math.PI / 3 + Math.PI, 0]}
         company="Delta Airlines"
         title="Data Science Intern"
         impact={[
           "Flight predictor reduced decisions by 70%",
           "ML models achieved 96% specificity",
-          "Cut wait times by 4min, $1M projected gain"
+          "Cut wait times by 4min, $1M projected gain",
         ]}
       />
 
       {/* UMich Sustainability */}
       <ExperienceDisplay
         position={[-8, 0, 20]}
-        rotation={[0, -Math.PI/3 + Math.PI, 0]}
+        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
         company="UMich Office of Sustainability"
         title="Data Science Consultant"
         impact={[
           "Created first automated emissions tracking",
           "Optimized data processing with pandas/polars",
-          "Built automated sustainable labs workflows"
+          "Built automated sustainable labs workflows",
         ]}
       />
 
       {/* Integrate */}
       <ExperienceDisplay
         position={[8, 0, 30]}
-        rotation={[0, Math.PI/3 + Math.PI, 0]}
+        rotation={[0, Math.PI / 3 + Math.PI, 0]}
         company="Integrate"
         title="ML Engineer"
         impact={[
           "Risk models with 87% accuracy for healthcare",
           "Built HIPAA-compliant AWS infrastructure",
-          "Implemented secure patient data handling"
+          "Implemented secure patient data handling",
+        ]}
+      />
+    </group>
+  )
+}
+
+function ProjectsSection() {
+  return (
+    <group position={[0, 0, 150]}>
+      {" "}
+      {/* Positioned further along the z-axis */}
+      {/* "Projects" text on the ground */}
+      <Text
+        position={[-15, -1, 15]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        fontSize={2}
+        color="#059669" // emerald-700
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={20}
+        fontWeight={700}
+      >
+        PROJECTS
+      </Text>
+      {/* Sustainability Dashboard */}
+      <ProjectDisplay
+        position={[-8, 0, 0]}
+        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
+        title="Sustainability Dashboard"
+        description="Real-time carbon footprint tracking platform"
+        technologies={["React", "Python", "AWS", "D3.js"]}
+        highlights={[
+          "Tracks emissions across 15+ data sources",
+          "Real-time visualization with interactive charts",
+          "Automated reporting saves 20 hours/week",
+        ]}
+      />
+      {/* ML Price Predictor */}
+      <ProjectDisplay
+        position={[8, 0, 10]}
+        rotation={[0, Math.PI / 3 + Math.PI, 0]}
+        title="ML Price Predictor"
+        description="Construction cost estimation using machine learning"
+        technologies={["Python", "Scikit-learn", "PostgreSQL", "FastAPI"]}
+        highlights={[
+          "95% accuracy on price predictions",
+          "Processes 1M+ data points daily",
+          "Reduced estimation time by 80%",
+        ]}
+      />
+      {/* Climate Data Pipeline */}
+      <ProjectDisplay
+        position={[-8, 0, 20]}
+        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
+        title="Climate Data Pipeline"
+        description="Automated climate data processing and analysis"
+        technologies={["Apache Airflow", "Pandas", "Docker", "GCP"]}
+        highlights={[
+          "Processes 50GB+ climate data daily",
+          "Automated quality checks and validation",
+          "Powers research for 3 universities",
+        ]}
+      />
+      {/* Portfolio Website */}
+      <ProjectDisplay
+        position={[8, 0, 30]}
+        rotation={[0, Math.PI / 3 + Math.PI, 0]}
+        title="3D Portfolio"
+        description="Interactive 3D portfolio using React Three Fiber"
+        technologies={["React", "Three.js", "TypeScript", "Next.js"]}
+        highlights={[
+          "Immersive 3D navigation experience",
+          "Mobile-responsive touch controls",
+          "Optimized performance with memoization",
         ]}
       />
     </group>
@@ -563,8 +755,8 @@ function ExperienceSection() {
 
 function IntroCard() {
   const isMobile = useIsMobile()
-  const position: [number, number, number] = isMobile ? [0, 2, 10] : [0, 2, 7]  // Move further back on mobile
-  const scale = isMobile ? 0.8 : 1  // Scale down on mobile
+  const position: [number, number, number] = isMobile ? [0, 2, 10] : [0, 2, 7] // Move further back on mobile
+  const scale = isMobile ? 0.8 : 1 // Scale down on mobile
 
   return (
     <group position={position} rotation={[0, Math.PI, 0]} scale={scale}>
@@ -573,28 +765,14 @@ function IntroCard() {
         <planeGeometry args={[12, 8]} />
         <meshStandardMaterial color="#ffffff" transparent opacity={0.9} />
       </mesh>
-      
+
       {/* Title */}
-      <Text
-        position={[0, 1.5, 0]}
-        fontSize={0.8}
-        color="#2563eb"
-        anchorX="center"
-        anchorY="middle"
-        maxWidth={8}
-      >
+      <Text position={[0, 1.5, 0]} fontSize={0.8} color="#2563eb" anchorX="center" anchorY="middle" maxWidth={8}>
         Rhys Burman
       </Text>
 
       {/* Subtitle */}
-      <Text
-        position={[0, 0.5, 0]}
-        fontSize={0.4}
-        color="#3b82f6"
-        anchorX="center"
-        anchorY="middle"
-        maxWidth={8}
-      >
+      <Text position={[0, 0.5, 0]} fontSize={0.4} color="#3b82f6" anchorX="center" anchorY="middle" maxWidth={8}>
         Data Science & Sustainability
       </Text>
 
@@ -620,23 +798,24 @@ function IntroCard() {
 const NatureScene = memo(function NatureScene() {
   return (
     <>
-      <IntroCard/>
+      <IntroCard />
       <ExperienceSection />
+      <ProjectsSection />
       <PathStones />
-      <Forest/>
+      <Forest />
       <Mountains position={[0, 0, 400]} />
       <Mountains position={[0, 0, 600]} />
     </>
   )
 })
 
-function RideCameraRig({ children, manualOffset }: { children: React.ReactNode, manualOffset: number }) {
+function RideCameraRig({ children, manualOffset }: { children: React.ReactNode; manualOffset: number }) {
   const group = useRef<THREE.Group>(null!)
   const scroll = useScroll()
   const isMobile = useIsMobile()
 
   useFrame(() => {
-    const offset = isMobile ? manualOffset : scroll?.offset ?? 0 
+    const offset = isMobile ? manualOffset : (scroll?.offset ?? 0)
     const z = offset * CORRIDOR_LEN
     const y = -1.5 + offset * -3
 
@@ -653,7 +832,6 @@ function RideCameraRig({ children, manualOffset }: { children: React.ReactNode, 
   )
 }
 
-
 export default function Portfolio() {
   const isMobile = useIsMobile()
   const [manualOffset, setManualOffset] = useState(0)
@@ -666,9 +844,9 @@ export default function Portfolio() {
 
     const moveInterval = setInterval(() => {
       if (isMovingForward) {
-        setManualOffset(prev => Math.min(MAX_OFFSET, prev + SCROLL_STEP * 0.016)) // 0.016 is roughly one frame at 60fps
+        setManualOffset((prev) => Math.min(MAX_OFFSET, prev + SCROLL_STEP * 0.016)) // 0.016 is roughly one frame at 60fps
       } else if (isMovingBackward) {
-        setManualOffset(prev => Math.max(MIN_OFFSET, prev - SCROLL_STEP * 0.016))
+        setManualOffset((prev) => Math.max(MIN_OFFSET, prev - SCROLL_STEP * 0.016))
       }
     }, 16) // Run at roughly 60fps
 
@@ -676,19 +854,21 @@ export default function Portfolio() {
   }, [isMobile, isMovingForward, isMovingBackward])
 
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600 select-none"
+    <div
+      className="w-full h-screen bg-gradient-to-b from-blue-400 to-blue-600 select-none"
       style={{
-            userSelect: "none",
-            WebkitUserSelect: "none",
-            msUserSelect: "none"
-          }}
-      >
-     <div className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 select-none"
-      style={{
-            userSelect: "none",
-            WebkitUserSelect: "none",
-            msUserSelect: "none"
-          }}
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        msUserSelect: "none",
+      }}
+    >
+      <div
+        className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 select-none"
+        style={{
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          msUserSelect: "none",
+        }}
       >
         <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
           My World
@@ -703,15 +883,15 @@ export default function Portfolio() {
         </ul>
       </div>
 
-       {/* Mobile nav buttons OUTSIDE the Canvas */}
-       {isMobile && (
+      {/* Mobile nav buttons OUTSIDE the Canvas */}
+      {isMobile && (
         <>
           <div className="fixed bottom-8 left-6 z-50">
             <button
               className="p-4 bg-white/90 rounded-full shadow-lg text-blue-600 hover:bg-white transition-colors select-none"
               style={{
                 WebkitTapHighlightColor: "transparent", // remove gray tap highlight
-                touchAction: "none",                    // prevent default gestures
+                touchAction: "none", // prevent default gestures
               }}
               onPointerDown={(e) => {
                 e.preventDefault()
@@ -720,15 +900,15 @@ export default function Portfolio() {
               onPointerUp={() => setIsMovingBackward(false)}
               onPointerLeave={() => setIsMovingBackward(false)}
               onContextMenu={(e) => e.preventDefault()} // prevent right-click popup
-              >
-              <svg 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2.5" 
-                strokeLinecap="round" 
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
                 strokeLinejoin="round"
               >
                 <path d="M18 15l-6 6-6-6" />
@@ -736,11 +916,11 @@ export default function Portfolio() {
             </button>
           </div>
           <div className="fixed bottom-8 right-6 z-50">
-          <button
+            <button
               className="p-4 bg-white/90 rounded-full shadow-lg text-blue-600 hover:bg-white transition-colors select-none"
               style={{
                 WebkitTapHighlightColor: "transparent", // remove gray tap highlight
-                touchAction: "none",                    // prevent default gestures
+                touchAction: "none", // prevent default gestures
               }}
               onPointerDown={(e) => {
                 e.preventDefault()
@@ -749,15 +929,15 @@ export default function Portfolio() {
               onPointerUp={() => setIsMovingForward(false)}
               onPointerLeave={() => setIsMovingForward(false)}
               onContextMenu={(e) => e.preventDefault()} // prevent right-click popup
-              >
-              <svg 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2.5" 
-                strokeLinecap="round" 
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
                 strokeLinejoin="round"
               >
                 <path d="M18 9l-6-6-6 6" />
@@ -768,16 +948,16 @@ export default function Portfolio() {
       )}
 
       <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
-        <color attach="background" args={['#93c5fd']} />
-        <fog attach="fog" args={['#bfdbfe', 120, 1000]} />
+        <color attach="background" args={["#93c5fd"]} />
+        <fog attach="fog" args={["#bfdbfe", 120, 1000]} />
         <ambientLight intensity={0.4} color="#e0f2fe" />
         <directionalLight position={[5, 8, -5]} intensity={1.2} color="#60a5fa" />
         <directionalLight position={[-4, 6, -5]} intensity={0.4} color="#93c5fd" />
         <Environment preset="dawn" />
-        <OrbitControls 
-          enableZoom={false} 
+        <OrbitControls
+          enableZoom={false}
           enablePan={false}
-          maxPolarAngle={Math.PI} 
+          maxPolarAngle={Math.PI}
           rotateSpeed={-0.3}
           enableDamping={true}
         />
