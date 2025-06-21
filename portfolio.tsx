@@ -695,22 +695,44 @@ export default function Portfolio() {
         <>
           <div className="fixed bottom-8 left-6 z-50">
             <button
-              className="px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors"
+              className="p-4 bg-white/90 rounded-full shadow-lg text-blue-600 hover:bg-white transition-colors select-none touch-none"
               onPointerDown={() => setIsMovingBackward(true)}
               onPointerUp={() => setIsMovingBackward(false)}
               onPointerLeave={() => setIsMovingBackward(false)}
             >
-              ← Back
+              <svg 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
             </button>
           </div>
           <div className="fixed bottom-8 right-6 z-50">
             <button
-              className="px-6 py-3 bg-white/90 rounded-full shadow-lg text-blue-600 font-semibold hover:bg-white transition-colors"
+              className="p-4 bg-white/90 rounded-full shadow-lg text-blue-600 hover:bg-white transition-colors select-none touch-none"
               onPointerDown={() => setIsMovingForward(true)}
               onPointerUp={() => setIsMovingForward(false)}
               onPointerLeave={() => setIsMovingForward(false)}
             >
-              Forward →
+              <svg 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
             </button>
           </div>
         </>
