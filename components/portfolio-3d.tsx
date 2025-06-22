@@ -4,9 +4,10 @@ import type React from "react"
 
 import { Canvas, useFrame } from "@react-three/fiber"
 import { ScrollControls, Scroll, useScroll, OrbitControls, Environment, Text, Plane } from "@react-three/drei"
-import { useRef, useState, useEffect, useMemo, memo } from "react"
+import { useRef, useState, useEffect, useMemo, memo, Suspense } from "react"
 import * as THREE from "three"
 import { useIsMobile } from "../hooks/use-mobile"
+import RegularPortfolio from "./regular-portfolio"
 
 const BLOCK_COUNT = 40 // how many blocks to spawn
 const SPACING = 6 // distance (z) between blocks
@@ -114,38 +115,6 @@ function PathStones() {
             <cylinderGeometry args={[stone.scale, stone.scale, 0.2]} />
             <meshLambertMaterial color="#94a3b8" />
           </mesh>
-          {/* Add arrow above the first stone */}
-          {i === 0 && (
-            <group position={[stone.x, 0, stone.z]}>
-              <mesh position={[0, 0, 1]} rotation={[-Math.PI / 2, 0, Math.PI]} scale={isMobile ? 0.7 : 1}>
-                <shapeGeometry
-                  args={[
-                    new THREE.Shape()
-                      .moveTo(-0.25, 0) // Start at base left
-                      .lineTo(0.25, 0) // Base right
-                      .lineTo(0.25, 0.5) // Shaft right
-                      .lineTo(0.5, 0.5) // Arrow head base right
-                      .lineTo(0, 1) // Arrow head tip
-                      .lineTo(-0.5, 0.5) // Arrow head base left
-                      .lineTo(-0.25, 0.5) // Shaft left
-                      .lineTo(-0.25, 0), // Back to start
-                  ]}
-                />
-                <meshStandardMaterial color={TEXT_COLORS.company} />
-              </mesh>
-              <Text
-                position={[0, 0, 0]}
-                rotation={[-Math.PI / 2, 0, Math.PI]}
-                fontSize={isMobile ? 0.15 : 0.2}
-                color={TEXT_COLORS.content}
-                anchorX="center"
-                anchorY="middle"
-                maxWidth={4}
-              >
-                Look Up and Explore
-              </Text>
-            </group>
-          )}
         </group>
       ))}
     </group>
@@ -798,7 +767,7 @@ function IntroCard() {
 const NatureScene = memo(function NatureScene() {
   return (
     <>
-      <IntroCard />
+      {/* <IntroCard /> */}
       <ExperienceSection />
       <ProjectsSection />
       <PathStones />
@@ -809,19 +778,20 @@ const NatureScene = memo(function NatureScene() {
   )
 })
 
-function RideCameraRig({ children, manualOffset }: { children: React.ReactNode; manualOffset: number }) {
+function RideCameraRig({ children, manualOffset, show3DOnly }: { children: React.ReactNode; manualOffset: number; show3DOnly: boolean }) {
   const group = useRef<THREE.Group>(null!)
   const scroll = useScroll()
   const isMobile = useIsMobile()
 
   useFrame(() => {
     const offset = isMobile ? manualOffset : (scroll?.offset ?? 0)
-    const z = offset * CORRIDOR_LEN
-    const y = -1.5 + offset * -3
+    const z = show3DOnly ? (offset * CORRIDOR_LEN) : -30
+    const y = show3DOnly ? (-1.5 + offset * -3) : -10 
+    const x = show3DOnly ? 0 : 0
 
     if (group.current) {
-      group.current.position.z = z
       group.current.position.y = y
+      group.current.position.z = z
     }
   })
 
@@ -837,6 +807,7 @@ export default function Portfolio() {
   const [manualOffset, setManualOffset] = useState(0)
   const [isMovingForward, setIsMovingForward] = useState(false)
   const [isMovingBackward, setIsMovingBackward] = useState(false)
+  const [show3DOnly, setShow3DOnly] = useState(false)
 
   // Handle continuous movement
   useEffect(() => {
@@ -844,11 +815,11 @@ export default function Portfolio() {
 
     const moveInterval = setInterval(() => {
       if (isMovingForward) {
-        setManualOffset((prev) => Math.min(MAX_OFFSET, prev + SCROLL_STEP * 0.016)) // 0.016 is roughly one frame at 60fps
+        setManualOffset((prev) => Math.min(MAX_OFFSET, prev + SCROLL_STEP * 0.016))
       } else if (isMovingBackward) {
         setManualOffset((prev) => Math.max(MIN_OFFSET, prev - SCROLL_STEP * 0.016))
       }
-    }, 16) // Run at roughly 60fps
+    }, 16)
 
     return () => clearInterval(moveInterval)
   }, [isMobile, isMovingForward, isMovingBackward])
@@ -862,36 +833,46 @@ export default function Portfolio() {
         msUserSelect: "none",
       }}
     >
-      <div
-        className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 select-none"
-        style={{
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          msUserSelect: "none",
-        }}
+      {/* View Toggle Button */}
+      <button
+        onClick={() => setShow3DOnly(prev => !prev)}
+        className="fixed top-8 right-8 bg-slate-900 px-6 py-3 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 hover:bg-slate-800 transition-colors"
       >
-        <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          My World
-        </h2>
-        <ul className="text-sm space-y-1 list-disc list-inside opacity-90 select-none">
-          {!isMobile ? (
-            <>
-              <li>Scroll to explore</li>
-              <li>Drag to look around</li>
-            </>
-          ) : null}
-        </ul>
-      </div>
+        {show3DOnly ? "Back to Basic View" : "Explore in 3D"}
+      </button>
+
+      {show3DOnly ? (
+        <div
+          className="fixed top-8 left-8 bg-slate-900 p-4 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 select-none"
+          style={{
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            msUserSelect: "none",
+          }}
+        >
+          <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            My World
+          </h2>
+          <ul className="text-sm space-y-1 list-disc list-inside opacity-90 select-none">
+            {!isMobile ? (
+              <>
+                <li>Scroll to explore</li>
+                <li>Drag to look around</li>
+              </>
+            ) : null}
+          </ul>
+        </div>
+      ) : null}
 
       {/* Mobile nav buttons OUTSIDE the Canvas */}
-      {isMobile && (
+      {isMobile && show3DOnly && (
         <>
           <div className="fixed bottom-8 left-6 z-50">
             <button
               className="p-4 bg-white/90 rounded-full shadow-lg text-blue-600 hover:bg-white transition-colors select-none"
               style={{
-                WebkitTapHighlightColor: "transparent", // remove gray tap highlight
-                touchAction: "none", // prevent default gestures
+                WebkitTapHighlightColor: "transparent",
+                touchAction: "none",
               }}
               onPointerDown={(e) => {
                 e.preventDefault()
@@ -899,7 +880,7 @@ export default function Portfolio() {
               }}
               onPointerUp={() => setIsMovingBackward(false)}
               onPointerLeave={() => setIsMovingBackward(false)}
-              onContextMenu={(e) => e.preventDefault()} // prevent right-click popup
+              onContextMenu={(e) => e.preventDefault()}
             >
               <svg
                 width="24"
@@ -919,8 +900,8 @@ export default function Portfolio() {
             <button
               className="p-4 bg-white/90 rounded-full shadow-lg text-blue-600 hover:bg-white transition-colors select-none"
               style={{
-                WebkitTapHighlightColor: "transparent", // remove gray tap highlight
-                touchAction: "none", // prevent default gestures
+                WebkitTapHighlightColor: "transparent",
+                touchAction: "none",
               }}
               onPointerDown={(e) => {
                 e.preventDefault()
@@ -928,7 +909,7 @@ export default function Portfolio() {
               }}
               onPointerUp={() => setIsMovingForward(false)}
               onPointerLeave={() => setIsMovingForward(false)}
-              onContextMenu={(e) => e.preventDefault()} // prevent right-click popup
+              onContextMenu={(e) => e.preventDefault()}
             >
               <svg
                 width="24"
@@ -946,35 +927,45 @@ export default function Portfolio() {
           </div>
         </>
       )}
-
-      <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
-        <color attach="background" args={["#93c5fd"]} />
-        <fog attach="fog" args={["#bfdbfe", 120, 1000]} />
-        <ambientLight intensity={0.4} color="#e0f2fe" />
-        <directionalLight position={[5, 8, -5]} intensity={1.2} color="#60a5fa" />
-        <directionalLight position={[-4, 6, -5]} intensity={0.4} color="#93c5fd" />
-        <Environment preset="dawn" />
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          maxPolarAngle={Math.PI}
-          rotateSpeed={-0.3}
-          enableDamping={true}
-        />
-        {!isMobile ? (
-          <ScrollControls pages={4} damping={0.15}>
-            <Scroll>
-              <RideCameraRig manualOffset={manualOffset}>
+      <div className="fixed top-0 left-0 w-full h-full z-0">
+        <Canvas camera={{ position: [0, 1, 0], fov: 75 }}>
+          <Suspense fallback={null}>
+            <color attach="background" args={["#93c5fd"]} />
+            <fog attach="fog" args={["#bfdbfe", 120, 1000]} />
+            <ambientLight intensity={0.4} color="#e0f2fe" />
+            <directionalLight position={[5, 8, -5]} intensity={1.2} color="#60a5fa" />
+            <directionalLight position={[-4, 6, -5]} intensity={0.4} color="#93c5fd" />
+            <Environment preset="dawn" />
+            <OrbitControls
+              enableZoom={false}
+              enablePan={false}
+              maxPolarAngle={Math.PI}
+              rotateSpeed={-0.3}
+              enableDamping={true}
+              target={[0, 1, -5]}
+            />
+            {!isMobile ? (
+              <ScrollControls pages={4} damping={0.15}>
+                <Scroll>
+                  <RideCameraRig manualOffset={manualOffset} show3DOnly={show3DOnly}>
+                    <NatureScene />
+                  </RideCameraRig>
+                </Scroll>
+              </ScrollControls>
+            ) : (
+              <RideCameraRig manualOffset={manualOffset} show3DOnly={show3DOnly}>
                 <NatureScene />
               </RideCameraRig>
-            </Scroll>
-          </ScrollControls>
-        ) : (
-          <RideCameraRig manualOffset={manualOffset}>
-            <NatureScene />
-          </RideCameraRig>
-        )}
-      </Canvas>
+            )}
+          </Suspense>
+        </Canvas>
+      </div>
+
+      {!show3DOnly && (
+        <div className="relative z-10">
+          <RegularPortfolio />
+        </div>
+      )}
     </div>
   )
 }
