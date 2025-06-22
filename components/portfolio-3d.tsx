@@ -99,7 +99,7 @@ function PathStones() {
   const isMobile = useIsMobile()
   // Memoize the stone positions and rotations
   const stones = useMemo(() => {
-    return Array.from({ length: 40 }, (_, i) => {
+    return Array.from({ length: 43 }, (_, i) => {
       const x = Math.sin(i * 0.3) * 2
       const rotation = Math.random() * Math.PI
       const scale = 0.8 + Math.random() * 0.4
