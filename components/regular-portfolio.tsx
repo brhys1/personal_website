@@ -11,135 +11,135 @@ import {
   MapPin,
   Calendar,
   Sparkles,
-  TrendingUp,
   Database,
   Code,
+  User,
+  Heart,
 } from "lucide-react"
+import { useState } from "react"
 
-export default function RegularPortfolio() {
+export default function ImprovedPortfolio() {
+  const [aboutMode, setAboutMode] = useState<"professional" | "fun">("professional")
+
   const skills = [
     {
-      category: "Programming",
-      items: ["Python", "R", "SQL", "JavaScript", "TypeScript"],
+      category: "Languages",
+      items: ["Python", "SQL", "C++", "R", "Java", "JavaScript"],
       icon: Code,
       color: "from-blue-500 to-cyan-500",
     },
     {
-      category: "Data Science",
-      items: ["Machine Learning", "Deep Learning", "Statistical Analysis", "Data Visualization"],
-      icon: TrendingUp,
-      color: "from-indigo-500 to-purple-500",
-    },
-    {
-      category: "Tools & Frameworks",
-      items: ["TensorFlow", "PyTorch", "Pandas", "Scikit-learn", "React", "Next.js"],
-      icon: Sparkles,
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      category: "Cloud & Databases",
-      items: ["AWS", "Google Cloud", "PostgreSQL", "MongoDB", "Docker"],
+      category: "Technologies",
+      items: ["Tableau", "AWS", "Git/Github", "Docker", "PostgreSQL", "Firebase", "Jupyter Notebook", "Google Cloud"],
       icon: Database,
       color: "from-cyan-500 to-blue-500",
     },
     {
-      category: "Sustainability",
-      items: ["Carbon Accounting", "LCA", "ESG Reporting", "Climate Data Analysis"],
+      category: "Frameworks",
+      items: [
+        "Pandas",
+        "NumPy",
+        "PyTorch",
+        "PySpark",
+        "Selenium",
+        "Scikit-Learn",
+        "Flask",
+        "React.js",
+        "Matplotlib",
+        "Plotly",
+      ],
       icon: Sparkles,
-      color: "from-green-500 to-emerald-500",
+      color: "from-purple-500 to-pink-500",
     },
   ]
 
   const experiences = [
     {
-      title: "Senior Data Scientist",
-      company: "University of Michigan",
+      title: "Data Engineering Intern",
+      company: "Clear Estimates",
       location: "Ann Arbor, MI",
-      period: "2022 - Present",
+      period: "May 2024 – May 2025",
+      description: "Built distributed price scraping and data engineering systems for construction cost estimation.",
+      icon: "/CE_logo.png",
+    },
+    {
+      title: "Data Science Intern",
+      company: "RemodelingCosts.com",
+      location: "Ann Arbor, MI",
+      period: "June 2025 – Present",
       description:
-        "Leading sustainability data initiatives and developing machine learning models for climate research.",
-      achievements: [
-        "Developed predictive models for carbon emission forecasting",
-        "Built automated data pipelines processing 10TB+ of climate data",
-        "Published 5 peer-reviewed papers on sustainability analytics",
-      ],
+        "Implemented GenAI and query classification for AI-driven estimate generation and lead optimization.",
+      icon: "/Remodeling_Costs_Logo.png",
+    },
+    {
+      title: "ML Software Intern",
+      company: "Delta Airlines",
+      location: "Detroit, MI",
+      period: "Feb 2025 – April 2025",
+      description: "Engineered and trained ML models for flight delay and connection success prediction.",
+      icon: "/delta_logo.png",
     },
     {
       title: "Data Scientist",
-      company: "Environmental Analytics Corp",
-      location: "Detroit, MI",
-      period: "2020 - 2022",
-      description: "Specialized in environmental data analysis and sustainability reporting for Fortune 500 companies.",
-      achievements: [
-        "Created ML models reducing energy consumption by 15%",
-        "Designed interactive dashboards for ESG reporting",
-        "Led cross-functional team of 8 data professionals",
-      ],
-    },
-    {
-      title: "Research Analyst",
-      company: "Climate Solutions Institute",
-      location: "Chicago, IL",
-      period: "2018 - 2020",
-      description: "Conducted research on climate change impacts using statistical modeling and data visualization.",
-      achievements: [
-        "Analyzed climate datasets spanning 50+ years",
-        "Developed visualization tools for policy makers",
-        "Contributed to IPCC climate assessment reports",
-      ],
-    },
-    {
-      title: "Junior Data Analyst",
-      company: "GreenTech Startup",
+      company: "University of Michigan - Office of Campus Sustainability",
       location: "Ann Arbor, MI",
-      period: "2017 - 2018",
-      description: "Entry-level position focusing on renewable energy data analysis and market research.",
-      achievements: [
-        "Built automated reporting systems",
-        "Performed market analysis for solar energy adoption",
-        "Created data collection protocols",
-      ],
+      period: "June 2025 – Present",
+      description: "Automated GHG emissions classification and data extraction for sustainability reporting.",
+      icon: "/ocs_logo.png",
+    },
+    {
+      title: "Founding Data Engineer",
+      company: "Integrate Health",
+      location: "Ann Arbor, MI",
+      period: "October 2024 – Present",
+      description: "Provisioned HIPAA-compliant infrastructure and engineered risk modeling pipelines for healthcare.",
+      icon: "/Integrate_logo.png",
     },
   ]
 
   const projects = [
     {
-      title: "Sustainability Dashboard",
+      title: "MCC Carpools Web App",
       description:
-        "Real-time carbon footprint tracking platform for enterprises with predictive analytics and automated reporting.",
-      technologies: ["React", "Python", "FastAPI", "PostgreSQL", "AWS"],
-      highlights: ["Processes 1M+ data points daily", "Reduces reporting time by 80%", "Used by 50+ organizations"],
+        "Developed a scalable carpool web app using React.js, Flask, and PostgreSQL; increased group participation by 61%.",
+      technologies: ["React.js", "Flask", "PostgreSQL", "Google Maps API"],
+      highlights: [
+        "Implemented Google Maps API for geo-optimization and created REST APIs for CRUD operations and data matching.",
+      ],
       github: "#",
       demo: "#",
       gradient: "from-blue-600 to-cyan-600",
     },
     {
-      title: "ML Price Predictor",
-      description: "Machine learning model for construction cost estimation using historical data and market trends.",
-      technologies: ["Python", "TensorFlow", "Pandas", "Docker", "GCP"],
+      title: "KTP Spotify Playlist Generator",
+      description:
+        "Designed backend APIs to serve music suggestions in real time, using Firebase, Spotify OAuth, and Elasticsearch.",
+      technologies: ["Firebase", "Spotify OAuth", "Elasticsearch", "TF-IDF"],
       highlights: [
-        "95% accuracy in cost predictions",
-        "Saves $2M+ in project planning",
-        "Deployed across 20+ construction sites",
+        "Built a custom TF-IDF-based classifier for party music that achieved 73% accuracy; integrated with personal user data.",
       ],
       github: "#",
       demo: "#",
       gradient: "from-indigo-600 to-purple-600",
     },
     {
-      title: "Climate Data Pipeline",
-      description: "Automated ETL pipeline for processing and analyzing global climate datasets from multiple sources.",
-      technologies: ["Python", "Apache Airflow", "MongoDB", "Kubernetes"],
-      highlights: ["Processes 100GB+ data daily", "99.9% uptime reliability", "Supports 15+ research projects"],
+      title: "MapReduce Simulator & Search Engine",
+      description:
+        "Simulated distributed MapReduce system using TCP/UDP, fault tolerance, parallelization, and heartbeat tracking.",
+      technologies: ["Python", "Flask", "TCP/UDP", "TF-IDF"],
+      highlights: [
+        "Built an inverted index system with TF-IDF weighting and exposed a Flask API to serve ranked search results.",
+      ],
       github: "#",
       demo: "#",
       gradient: "from-purple-600 to-pink-600",
     },
     {
-      title: "3D Portfolio Website",
-      description: "Interactive 3D portfolio experience built with React Three Fiber showcasing projects and skills.",
-      technologies: ["React", "Three.js", "Next.js", "TypeScript", "Tailwind"],
-      highlights: ["Immersive 3D navigation", "Mobile-responsive design", "Particle system animations"],
+      title: "ML Cuisine Classifier",
+      description:
+        "Developed and optimized an ML pipeline using scikit-learn, integrating TF-IDF, Random Forest, K-fold testing, and K-Nearest Neighbors (KNN) to bring classification accuracy to 83%.",
+      technologies: ["scikit-learn", "TF-IDF", "Random Forest", "KNN"],
+      highlights: [],
       github: "#",
       demo: "#",
       gradient: "from-cyan-600 to-blue-600",
@@ -148,257 +148,337 @@ export default function RegularPortfolio() {
 
   return (
     <div className="min-h-screen bg-transparent">
-      {/* Remove floating background elements entirely */}
-      
-      <section className="relative py-20 px-4">
-        <div className="absolute inset-0 from-blue-100/40 to-cyan-100/40"></div>
+      {/* Hero Section with Headshot */}
+      <section className="relative py-12 px-4">
         <div className="max-w-6xl mx-auto relative">
-          <Card className="text-center mb-16 bg-gradient-to-br from-white to-blue-50/50 border-0 shadow-2xl relative overflow-hidden">
-            <CardHeader className="relative">
-              <CardTitle className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-6">
-                Rhys Burman
-              </CardTitle>
-              <CardDescription className="text-2xl md:text-3xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-semibold mb-6">
-                Data Scientist & Sustainability Expert
-              </CardDescription>
-              <div className="flex items-center justify-center gap-6 text-slate-600 mb-6">
-                <div className="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full">
-                  <MapPin className="w-5 h-5 text-blue-600" /> <span>Ann Arbor, MI</span>
+          <Card className="bg-gradient-to-br from-white to-blue-50/50 border-0 shadow-2xl relative overflow-hidden">
+            <CardContent className="p-8">
+              <div className="grid md:grid-cols-3 gap-8 items-center">
+                {/* Text Content - Left Side */}
+                <div className="md:col-span-2">
+                  <h1 className="text-4xl md:text-6xl font-bold text-slate-800 mb-4">Rhys Burman</h1>
+                  <p className="text-xl md:text-2xl text-blue-600 font-semibold mb-6">
+                    Data Scientist & Sustainability
+                  </p>
+                  <div className="flex flex-wrap items-center gap-4 text-slate-700 mb-6">
+                    <div className="flex items-center gap-2 bg-white/70 px-3 py-2 rounded-full">
+                      <MapPin className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm">Ann Arbor, MI</span>
+                    </div>
+                    <a
+                      href="https://mail.google.com/mail/?view=cm&to=brhys@umich.edu"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 bg-white/70 px-3 py-2 rounded-full hover:bg-white transition-colors"
+                    >
+                      <Mail className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm">brhys@umich.edu</span>
+                    </a>
+                  </div>
+                  <div className="flex gap-3">
+                    <a href="https://github.com/brhys1" target="_blank" rel="noopener noreferrer">
+                      <Button
+                        variant="outline"
+                        className="border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 bg-transparent"
+                      >
+                        <Github className="w-4 h-4 mr-2" /> GitHub
+                      </Button>
+                    </a>
+                    <a href="https://linkedin.com/in/rhys-burman" target="_blank" rel="noopener noreferrer">
+                      <Button
+                        variant="outline"
+                        className="border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 bg-transparent"
+                      >
+                        <Linkedin className="w-4 h-4 mr-2" /> LinkedIn
+                      </Button>
+                    </a>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 bg-white/50 px-3 py-1 rounded-full">
-                  <Mail className="w-5 h-5 text-blue-600" /> <span>brhys@umich.edu</span>
-                </div>
-              </div>
-              <div className="flex justify-center gap-4">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300"
-                >
-                  <Github className="w-5 h-5 mr-2" /> GitHub
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300"
-                >
-                  <Linkedin className="w-5 h-5 mr-2" /> LinkedIn
-                </Button>
-              </div>
-            </CardHeader>
-          </Card>
 
-          <Card className="max-w-4xl mx-auto bg-gradient-to-br from-white to-purple-50/50 border-0 shadow-2xl relative overflow-hidden">
-            <CardHeader className="relative">
-              <CardTitle className="text-3xl text-center bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent">
-                About Me
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-lg text-slate-700 leading-relaxed relative">
-              <p className="mb-4">
-                I'm a passionate data scientist specializing in sustainability and environmental analytics at the
-                University of Michigan. With over 6 years of experience, I combine advanced machine learning techniques
-                with domain expertise in climate science to drive meaningful environmental impact.
-              </p>
-              <p className="mb-4">
-                My work focuses on developing predictive models for carbon emissions, building automated data pipelines
-                for climate research, and creating interactive visualizations that help organizations make data-driven
-                sustainability decisions.
-              </p>
-              <p>
-                When I'm not analyzing data, you can find me hiking Michigan's trails, contributing to open-source
-                climate projects, or experimenting with new visualization techniques to make complex environmental data
-                more accessible.
-              </p>
+                {/* Headshot Placeholder - Right Side */}
+                <div className="flex justify-center">
+                  <img
+                    src="/headshot_f24_cropped.jpg"
+                    alt="Rhys Burman Headshot"
+                    className="w-64 h-64 rounded-full border-4 border-white shadow-lg object-cover"
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      <section className="relative py-20 px-4">
+      {/* About Me Section with Toggle */}
+      <section className="relative py-12 px-4">
         <div className="max-w-6xl mx-auto relative">
-          <div className="bg-gradient-to-br from-white to-blue-50/50 backdrop-blur-sm rounded-3xl shadow-xl p-12 mb-16">
-            <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-16">
-              Skills & Expertise
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {skills.map((skillGroup, index) => {
-                const IconComponent = skillGroup.icon
-                return (
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* About Me Content */}
+            <div className="md:col-span-2">
+              <Card className="bg-gradient-to-br from-white to-purple-50/50 border-0 shadow-2xl relative overflow-hidden">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-2xl text-slate-800">About Me</CardTitle>
+                    <div className="flex bg-white/70 rounded-full p-1">
+                      <Button
+                        variant={aboutMode === "professional" ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setAboutMode("professional")}
+                        className={aboutMode === "professional" ? "bg-blue-600 text-white" : "text-slate-600"}
+                      >
+                        <User className="w-4 h-4 mr-1" />
+                        Professional
+                      </Button>
+                      <Button
+                        variant={aboutMode === "fun" ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setAboutMode("fun")}
+                        className={aboutMode === "fun" ? "bg-blue-600 text-white" : "text-slate-600"}
+                      >
+                        <Heart className="w-4 h-4 mr-1" />
+                        Fun
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {aboutMode === "professional" ? (
+                    <div className="text-slate-700 leading-relaxed">
+                      <p className="mb-4">
+                        I'm a passionate data scientist specializing in sustainability at the University of Michigan.
+                        Planning on graduating in May 2027 with an MS in Data Science, I want to combine data and
+                        machine learning with expertise in climate science to drive meaningful environmental impact and
+                        help companies reduce their carbon footprint.
+                      </p>
+                      <p>
+                        My experience spans data engineering, machine learning, and sustainability analytics across
+                        various industries including construction, healthcare, and aviation. I'm particularly interested
+                        in leveraging AI and data science to solve complex environmental challenges.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="text-slate-700 leading-relaxed">
+                      <p className="mb-2">
+                        I love nature and being outside and enjoying new places, especially the mountains. 
+                        Skiing, rock climbing, biking, and hiking are all places you will fine me when I'm not at my computer. 
+                      </p>
+                      <p className="mb-2">
+                        I'm also a huge Harry Potter fan and love to read and discuss the books. I kill it at Harry Potter trivia.
+                        I also listen to a podcast about Harry Potter that releases every Sunday. Maybe I'm too into it...
+                      </p>
+                      <p className="mb-4">
+                        I really enjoy playing card games and board games. From playing hearts with my family to playing poker with my friends, 
+                        I'm always exctied for a game night. If you have any game recommendations, I would love to learn. 
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Image Gallery Overlapping Stack */}
+            <div className="relative w-80 h-80 md:w-100 md:h-100">
+              {/* Back Photo - Climbing in bottom-right */}
+              <div className="absolute bottom-0 right-0 w-48 h-48 md:w-50 md:h-50 rounded-lg overflow-hidden shadow-lg z-0">
+                <img
+                  src= {aboutMode=="professional" ? "/rhys_kavya_dp.jpg" : "/skiing_pic.jpg"}
+                  alt="Rhys and Kavya DP"
+                  className="object-cover w-full h-full"
+                />
+              </div>
+
+              {/* Front Photo - Friends in top-left */}
+              <div className="absolute top-0 left-0 w-48 h-48 md:w-50 md:h-50 rounded-lg overflow-hidden shadow-xl z-10">
+                <img
+                  src= {aboutMode=="professional" ? "/friends_pic.jpg" : "/climbing_pic.jpg"}
+                  alt="MCC"
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Skills Section */}
+      <section className="relative py-12 px-4">
+        <div className="max-w-6xl mx-auto relative">
+          <Card className="bg-gradient-to-br from-white to-blue-50/50 border-0 shadow-2xl">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-3xl text-center text-slate-800">Skills & Expertise</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {skills.map((skillGroup, index) => {
+                  const IconComponent = skillGroup.icon
+                  return (
+                    <Card
+                      key={index}
+                      className="group hover:shadow-xl transition-all duration-300 bg-white border-0 relative overflow-hidden hover:-translate-y-1"
+                    >
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-br ${skillGroup.color} opacity-5 group-hover:opacity-10 transition-opacity duration-300`}
+                      ></div>
+                      <CardHeader className="relative pb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg bg-gradient-to-r ${skillGroup.color} text-white`}>
+                            <IconComponent className="w-5 h-5" />
+                          </div>
+                          <CardTitle className="text-lg text-slate-800">{skillGroup.category}</CardTitle>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="relative pt-0">
+                        <div className="flex flex-wrap gap-2">
+                          {skillGroup.items.map((skill, skillIndex) => (
+                            <Badge
+                              key={skillIndex}
+                              variant="secondary"
+                              className="bg-blue-100/80 text-blue-800 hover:bg-blue-200/80 transition-colors duration-300 text-xs"
+                            >
+                              {skill}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Experience Section */}
+      <section className="relative py-12 px-4">
+        <div className="max-w-6xl mx-auto relative">
+          <div className="grid md:grid-cols-4 gap-6">
+            {/* Experience Content */}
+            <div className="md:col-span-3">
+              <Card className="bg-gradient-to-br from-white to-purple-50/50 border-0 shadow-2xl">
+                <CardHeader className="pb-6">
+                  <CardTitle className="text-3xl text-center text-slate-800">Experience</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative">
+                    <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 to-indigo-400"></div>
+                    {experiences.map((exp, index) => (
+                      <div key={index} className="relative mb-8 ml-12">
+                        <div className="absolute -left-8 top-4 w-4 h-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full border-2 border-white shadow"></div>
+                        <Card className="group hover:shadow-lg transition-all duration-300 bg-white border-0 relative overflow-hidden">
+                          <CardContent className="p-4">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <h3 className="text-lg font-semibold text-slate-800">{exp.title}</h3>
+                                <p className="text-base font-medium text-blue-600">{exp.company}</p>
+                              </div>
+                              <div className="text-right text-xs text-slate-500">
+                                <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full mb-1">
+                                  <Calendar className="w-3 h-3 text-blue-600" />
+                                  {exp.period}
+                                </div>
+                                <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full">
+                                  <MapPin className="w-3 h-3 text-blue-600" />
+                                  {exp.location}
+                                </div>
+                              </div>
+                            </div>
+                            <p className="text-sm text-slate-700">{exp.description}</p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Projects Section */}
+      <section className="relative py-12 px-4">
+        <div className="max-w-6xl mx-auto relative">
+          <Card className="bg-gradient-to-br from-white to-emerald-50/50 border-0 shadow-2xl">
+            <CardHeader className="pb-6">
+              <CardTitle className="text-3xl text-center text-slate-800">Featured Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                {projects.map((project, index) => (
                   <Card
                     key={index}
-                    className="group hover:shadow-2xl transition-all duration-500 bg-white border-0 relative overflow-hidden hover:-translate-y-2"
+                    className={`group hover:shadow-xl transition-all duration-300 bg-white border-0 relative overflow-hidden hover:-translate-y-1`}
                   >
                     <div
-                      className={`absolute inset-0 bg-gradient-to-br ${skillGroup.color} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}
+                      className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300`}
                     ></div>
-                    <CardHeader className="relative">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className={`p-2 rounded-lg bg-gradient-to-r ${skillGroup.color} text-white`}>
-                          <IconComponent className="w-5 h-5" />
-                        </div>
-                        <CardTitle className="text-xl text-slate-800">{skillGroup.category}</CardTitle>
-                      </div>
+                    <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${project.gradient}`}></div>
+                    <CardHeader className="relative pb-3">
+                      <CardTitle className="text-lg text-slate-800">{project.title}</CardTitle>
+                      <CardDescription className="text-sm text-slate-600">{project.description}</CardDescription>
                     </CardHeader>
-                    <CardContent className="relative">
-                      <div className="flex flex-wrap gap-2">
-                        {skillGroup.items.map((skill, skillIndex) => (
-                          <Badge
-                            key={skillIndex}
-                            variant="secondary"
-                            className="bg-blue-100/80 text-blue-800 hover:bg-blue-200/80 transition-colors duration-300"
-                          >
-                            {skill}
-                          </Badge>
-                        ))}
+                    <CardContent className="relative pt-0">
+                      <div className="mb-3">
+                        <h4 className="font-medium text-slate-700 mb-2 text-sm">Technologies:</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {project.technologies.map((tech, techIndex) => (
+                            <Badge key={techIndex} variant="outline" className="text-xs border-blue-200 text-blue-700">
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      {project.highlights.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="font-medium text-slate-700 mb-2 text-sm">Key Highlights:</h4>
+                          <ul className="space-y-1">
+                            {project.highlights.map((highlight, hlIndex) => (
+                              <li key={hlIndex} className="flex items-start gap-2 text-slate-600 text-xs">
+                                <div
+                                  className={`w-1.5 h-1.5 bg-gradient-to-r ${project.gradient} rounded-full mt-1.5 flex-shrink-0`}
+                                ></div>
+                                {highlight}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs border-blue-200 text-blue-700 hover:bg-blue-50 bg-transparent"
+                        >
+                          <Github className="w-3 h-3 mr-1" /> Code
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs border-blue-200 text-blue-700 hover:bg-blue-50 bg-transparent"
+                        >
+                          <ExternalLink className="w-3 h-3 mr-1" /> Demo
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
-                )
-              })}
-            </div>
-          </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      <section className="relative py-20 px-4">
-        <div className="max-w-4xl mx-auto relative">
-          <div className="bg-gradient-to-br from-white to-purple-50/50 backdrop-blur-sm rounded-3xl shadow-xl p-12 mb-16">
-            <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-16">
-              Experience
-            </h2>
-            <div className="relative">
-              <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-indigo-400 rounded-full"></div>
-              {experiences.map((exp, index) => (
-                <div key={index} className="relative mb-12 ml-16">
-                  <div className="absolute -left-12 top-6 w-6 h-6 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full border-4 border-white shadow-lg"></div>
-                  <Card className="group hover:shadow-2xl transition-all duration-500 bg-white border-0 relative overflow-hidden hover:-translate-y-1">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-indigo-50/20 group-hover:from-blue-50/50 group-hover:to-indigo-50/50 transition-all duration-500"></div>
-                    <CardHeader className="relative">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <CardTitle className="text-xl text-slate-800">{exp.title}</CardTitle>
-                          <CardDescription className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                            {exp.company}
-                          </CardDescription>
-                        </div>
-                        <div className="text-right text-sm text-slate-500">
-                          <div className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded-full">
-                            <Calendar className="w-4 h-4 text-blue-600" />
-                            {exp.period}
-                          </div>
-                          <div className="flex items-center gap-1 mt-1 bg-white/50 px-2 py-1 rounded-full">
-                            <MapPin className="w-4 h-4 text-blue-600" />
-                            {exp.location}
-                          </div>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="relative">
-                      <p className="text-slate-700 mb-4">{exp.description}</p>
-                      <ul className="space-y-2">
-                        {exp.achievements.map((achievement, achIndex) => (
-                          <li key={achIndex} className="flex items-start gap-2 text-slate-600">
-                            <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mt-2 flex-shrink-0"></div>
-                            {achievement}
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative py-20 px-4">
-        <div className="max-w-6xl mx-auto relative">
-          <div className="bg-gradient-to-br from-white to-emerald-50/50 backdrop-blur-sm rounded-3xl shadow-xl p-12 mb-16">
-            <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent mb-16">
-              Featured Projects
-            </h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              {projects.map((project, index) => (
-                <Card
-                  key={index}
-                  className={`group hover:shadow-2xl transition-all duration-500 bg-white border-0 relative overflow-hidden hover:-translate-y-2`}
-                >
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-5 group-hover:opacity-15 transition-opacity duration-500`}
-                  ></div>
-                  <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${project.gradient}`}></div>
-                  <CardHeader className="relative">
-                    <CardTitle className={`text-xl group-hover:bg-gradient-to-r ${project.gradient} group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300`}>
-                      {project.title}
-                    </CardTitle>
-                    <CardDescription className="text-slate-600">{project.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="relative">
-                    <div className="mb-4">
-                      <h4 className="font-semibold text-slate-700 mb-2">Technologies:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {project.technologies.map((tech, techIndex) => (
-                          <Badge
-                            key={techIndex}
-                            variant="outline"
-                            className={`bg-gradient-to-r ${project.gradient} bg-clip-text text-transparent border-current hover:bg-white transition-colors duration-300`}
-                          >
-                            {tech}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="mb-6">
-                      <h4 className="font-semibold text-slate-700 mb-2">Key Highlights:</h4>
-                      <ul className="space-y-1">
-                        {project.highlights.map((highlight, hlIndex) => (
-                          <li key={hlIndex} className="flex items-start gap-2 text-slate-600 text-sm">
-                            <div
-                              className={`w-2 h-2 bg-gradient-to-r ${project.gradient} rounded-full mt-2 flex-shrink-0`}
-                            ></div>
-                            {highlight}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={`bg-gradient-to-r ${project.gradient} bg-clip-text text-transparent border-current hover:bg-white transition-all duration-300`}
-                      >
-                        <Github className="w-4 h-4 mr-2" /> Code
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={`bg-gradient-to-r ${project.gradient} bg-clip-text text-transparent border-current hover:bg-white transition-all duration-300`}
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" /> Demo
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative py-20 px-4">
-        <div className="absolute inset-0 from-emerald-100/40 to-teal-100/40"></div>
+      {/* Contact Section */}
+      <section className="relative py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <Card className="bg-white border-0 shadow-2xl relative overflow-hidden">
-            <div className="absolute inset-0 from-blue-600/5 to-indigo-600/5"></div>
-            <CardHeader className="relative">
-              <CardTitle className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent">
-                Let's Connect
-              </CardTitle>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-indigo-600/5"></div>
+            <CardHeader className="relative pb-4">
+              <CardTitle className="text-3xl font-bold text-slate-800">Let's Connect</CardTitle>
             </CardHeader>
             <CardContent className="relative">
-              <p className="text-xl text-slate-700 mb-8">
+              <p className="text-lg text-slate-700 mb-6">
                 Interested in collaborating on sustainability projects or discussing data science opportunities?
               </p>
               <div className="flex justify-center gap-4">
@@ -411,7 +491,7 @@ export default function RegularPortfolio() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-blue-200 text-slate-800 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300"
+                  className="border-blue-200 text-slate-800 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 bg-transparent"
                 >
                   <Linkedin className="w-5 h-5 mr-2" /> LinkedIn
                 </Button>

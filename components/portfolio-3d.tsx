@@ -401,7 +401,7 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; ro
           maxWidth={4.5}
           textAlign="center"
         >
-          Leveraging ML and data science to drive
+          Python • SQL • C++ • R • Java • JavaScript
         </Text>
         <Text
           position={[0, -0.7, 0]}
@@ -412,24 +412,19 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; ro
           maxWidth={4.5}
           textAlign="center"
         >
-          environmental impact through innovative solutions
+          AWS • Docker • PostgreSQL • Pandas • React.js
         </Text>
-
-        <group position={[0, -1.2, 0]}>
-          {["Python • ML • AWS", "Sustainability • Analytics", "Full Stack • Data Engineering"].map((text, idx) => (
-            <Text
-              key={idx}
-              position={[0, -idx * 0.3, 0]}
-              fontSize={0.15}
-              color={TEXT_COLORS.content}
-              anchorX="center"
-              anchorY="middle"
-              maxWidth={4}
-            >
-              {text}
-            </Text>
-          ))}
-        </group>
+        <Text
+          position={[0, -1.0, 0]}
+          fontSize={0.18}
+          color={TEXT_COLORS.content}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={4.5}
+          textAlign="center"
+        >
+          PyTorch • Scikit-Learn • Flask • Firebase
+        </Text>
       </group>
     </group>
   )
@@ -513,6 +508,19 @@ function InterestPedestal({
   }
 
   return (
+    <>  
+    <Text
+        position={[-8, 8, 0]}
+        rotation={[0, Math.PI, 0]}
+        fontSize={2}
+        color="#ffffff"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={20} 
+        fontWeight={700}
+      >
+        Interests
+      </Text>
     <group rotation={rotation} ref={groupRef}>
       {/* Platform base */}
       <mesh position={[0, 0, 0]}>
@@ -547,6 +555,7 @@ function InterestPedestal({
         {label}
       </Text>
     </group>
+    </>
   )
 }
 
@@ -595,53 +604,65 @@ function ExperienceSection() {
 
       {/* Clear Estimates */}
       <ExperienceDisplay
-        position={[-8, 0, 0]}
+        position={[-12, 0, 0]}
         rotation={[0, -Math.PI / 3 + Math.PI, 0]}
         company="Clear Estimates"
-        title="Lead Data Scientist"
+        title="Data Engineering Intern"
         impact={[
-          "Built price scraper covering 350+ locations, 90% faster",
-          "Analyzed 28M rows to improve accuracy by 21%",
-          "Developed AI-powered contractor leads platform",
+          "Built a distributed price scraping system using Python and Selenium, retrieving 6,000+ prices from 350+ supplier locations; improved data accuracy by 21% and error detection by 20%.",
+          "Containerized and deployed the pipeline via AWS Batch and Docker, and created Pandas analysis scripts; reduced collection time by 97%, freeing 1000+ hours per year in manual collection and processing.",
+          "Designed and engineered workflows to integrate RemodelingCosts.com, leveraging prebuilt templates from custom API and query classification to generate contractor leads; expected to 3x net company revenue in 4 years.",
+          "Processed 28M+ rows of labor data using Pandas and PostgreSQL to identify and correct input inconsistencies, increased model accuracy by 19% and customer satisfaction by 62%.",
+        ]}
+      />
+
+      {/* RemodelingCosts.com */}
+      <ExperienceDisplay
+        position={[12, 0, 0]}
+        rotation={[0, Math.PI / 3 + Math.PI, 0]}
+        company="RemodelingCosts.com"
+        title="Data Science Intern"
+        impact={[
+          "Implemented GenAI to generate templates based on user queries, enabling AI-driven estimate generation; used Google analytics and model-query A/B testing to increase accuracy and generate 80% more leads across 5+ iterations.",
+          "Collaborated with CEO to build platform to connect users with contractors; projected 3x in total company revenue.",
+          "Designed and engineered AI generated templates, based on unsupervised grouping, Vertex AI vectorized database, and Gemini text processing; allowed for 50% increase in number of user on platform and 70% higher lead conversion rate.",
         ]}
       />
 
       {/* Delta Airlines */}
       <ExperienceDisplay
-        position={[8, 0, 10]}
-        rotation={[0, Math.PI / 3 + Math.PI, 0]}
+        position={[-12, 0, 15]}
+        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
         company="Delta Airlines"
-        title="Data Science Intern"
+        title="ML Software Intern"
         impact={[
-          "Flight predictor reduced decisions by 70%",
-          "ML models achieved 96% specificity",
-          "Cut wait times by 4min, $1M projected gain",
+          "Engineered and trained two ML models using PyTorch (Random Forest and Logistic Regressor) that estimate delays and connection success rates (R² = 0.99; specificity 96%), significantly reducing reliance on conservative scheduling buffers.",
+          "Enabled an average 4-minute reduction in departure time at DTW, unlocking the potential to schedule additional flights, generating a projected $2M in annual profit through improved aircraft utilization and on-time departures.",
         ]}
       />
 
       {/* UMich Sustainability */}
       <ExperienceDisplay
-        position={[-8, 0, 20]}
-        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
-        company="UMich Office of Sustainability"
-        title="Data Science Consultant"
+        position={[12, 0, 15]}
+        rotation={[0, Math.PI / 3 + Math.PI, 0]}
+        company="University of Michigan - Office of Campus Sustainability"
+        title="Data Scientist"
         impact={[
-          "Created first automated emissions tracking",
-          "Optimized data processing with pandas/polars",
-          "Built automated sustainable labs workflows",
+          "Designed and implemented Python Polars pipelines to classify millions of transactions by GHG emissions category with TF-IDF — automated and streamlined processes during the university’s first attempt at classifying Scope 3 emissions.",
+          "Used Gen-AI to extract and breakdown emissions data, reducing manual labor by over 60%; developed repeatable Python scripts to make workflows scalable.",
         ]}
       />
 
-      {/* Integrate */}
+      {/* Integrate Health */}
       <ExperienceDisplay
-        position={[8, 0, 30]}
-        rotation={[0, Math.PI / 3 + Math.PI, 0]}
-        company="Integrate"
-        title="ML Engineer"
+        position={[-12, 0, 30]}
+        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
+        company="Integrate Health"
+        title="Founding Data Engineer"
         impact={[
-          "Risk models with 87% accuracy for healthcare",
-          "Built HIPAA-compliant AWS infrastructure",
-          "Implemented secure patient data handling",
+          "Provisioned HIPAA-compliant infrastructure using AWS Aurora PostgreSQL within a VPC; launched encrypted database to support sensitive EHR data for risk assessment modeling.",
+          "Supported engineering of patient and population health data pipelines to feed risk models achieving 87% accuracy–outperforming common commercial models.",
+          "Developed custom dashboards platform allowing for hospitals to visualize and analyze both individual and population-level health data; surfaced risk trends that informed equitable care recommendations.",
         ]}
       />
     </group>
@@ -651,14 +672,12 @@ function ExperienceSection() {
 function ProjectsSection() {
   return (
     <group position={[0, 0, 150]}>
-      {" "}
-      {/* Positioned further along the z-axis */}
       {/* "Projects" text on the ground */}
       <Text
         position={[0, 8, 0]}
         rotation={[0, Math.PI, 0]}
         fontSize={2}
-        color="#059669" // emerald-700
+        color="#059669"
         anchorX="center"
         anchorY="middle"
         maxWidth={20}
@@ -666,57 +685,47 @@ function ProjectsSection() {
       >
         PROJECTS
       </Text>
-      {/* Sustainability Dashboard */}
+      {/* MCC Carpools Web App */}
       <ProjectDisplay
-        position={[-8, 0, 0]}
+        position={[-12, 0, 0]}
         rotation={[0, -Math.PI / 3 + Math.PI, 0]}
-        title="Sustainability Dashboard"
-        description="Real-time carbon footprint tracking platform"
-        technologies={["React", "Python", "AWS", "D3.js"]}
+        title="MCC Carpools Web App"
+        description="Developed a scalable carpool web app using React.js, Flask, and PostgreSQL; increased group participation by 61%."
+        technologies={["React.js", "Flask", "PostgreSQL", "Google Maps API"]}
         highlights={[
-          "Tracks emissions across 15+ data sources",
-          "Real-time visualization with interactive charts",
-          "Automated reporting saves 20 hours/week",
+          "Implemented Google Maps API for geo-optimization and created REST APIs for CRUD operations and data matching.",
         ]}
       />
-      {/* ML Price Predictor */}
+      {/* KTP Spotify Playlist Generator */}
       <ProjectDisplay
-        position={[8, 0, 10]}
+        position={[12, 0, 0]}
         rotation={[0, Math.PI / 3 + Math.PI, 0]}
-        title="ML Price Predictor"
-        description="Construction cost estimation using machine learning"
-        technologies={["Python", "Scikit-learn", "PostgreSQL", "FastAPI"]}
+        title="KTP Spotify Playlist Generator"
+        description="Designed backend APIs to serve music suggestions in real time, using Firebase, Spotify OAuth, and Elasticsearch."
+        technologies={["Firebase", "Spotify OAuth", "Elasticsearch", "TF-IDF"]}
         highlights={[
-          "95% accuracy on price predictions",
-          "Processes 1M+ data points daily",
-          "Reduced estimation time by 80%",
+          "Built a custom TF-IDF-based classifier for party music that achieved 73% accuracy; integrated with personal user data.",
         ]}
       />
-      {/* Climate Data Pipeline */}
+      {/* MapReduce Simulator & Search Engine */}
       <ProjectDisplay
-        position={[-8, 0, 20]}
+        position={[-12, 0, 15]}
         rotation={[0, -Math.PI / 3 + Math.PI, 0]}
-        title="Climate Data Pipeline"
-        description="Automated climate data processing and analysis"
-        technologies={["Apache Airflow", "Pandas", "Docker", "GCP"]}
+        title="MapReduce Simulator & Search Engine"
+        description="Simulated distributed MapReduce system using TCP/UDP, fault tolerance, parallelization, and heartbeat tracking."
+        technologies={["Python", "Flask", "TCP/UDP", "TF-IDF"]}
         highlights={[
-          "Processes 50GB+ climate data daily",
-          "Automated quality checks and validation",
-          "Powers research for 3 universities",
+          "Built an inverted index system with TF-IDF weighting and exposed a Flask API to serve ranked search results.",
         ]}
       />
-      {/* Portfolio Website */}
+      {/* ML Cuisine Classifier */}
       <ProjectDisplay
-        position={[8, 0, 30]}
+        position={[12, 0, 15]}
         rotation={[0, Math.PI / 3 + Math.PI, 0]}
-        title="3D Portfolio"
-        description="Interactive 3D portfolio using React Three Fiber"
-        technologies={["React", "Three.js", "TypeScript", "Next.js"]}
-        highlights={[
-          "Immersive 3D navigation experience",
-          "Mobile-responsive touch controls",
-          "Optimized performance with memoization",
-        ]}
+        title="ML Cuisine Classifier"
+        description="Developed and optimized an ML pipeline using scikit-learn, integrating TF-IDF, Random Forest, K-fold testing, and K-Nearest Neighbors (KNN) to bring classification accuracy to 83%."
+        technologies={["scikit-learn", "TF-IDF", "Random Forest", "KNN"]}
+        highlights={[]}
       />
     </group>
   )
