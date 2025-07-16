@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   title: "Rhys Burman",
   description: "Rhys Burman's Portfolio",
   generator: "v0.dev",
+  icons: {
+    icon: "/favicon_logo_rhys.png",
+    apple: "/favicon_logo_rhys.png",
+  },
 }
 
 export default function RootLayout({

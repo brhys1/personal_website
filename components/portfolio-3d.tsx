@@ -574,7 +574,7 @@ function ExperienceSection() {
         position={[0, 8, 0]}
         rotation={[0, Math.PI, 0]}
         fontSize={2}
-        color={TEXT_COLORS.heading}
+        color="#ffffff"
         anchorX="center"
         anchorY="middle"
         maxWidth={20} 
@@ -684,7 +684,7 @@ function ProjectsSection() {
         position={[0, 8, 0]}
         rotation={[0, Math.PI, 0]}
         fontSize={2}
-        color="#059669"
+        color="#ffffff"
         anchorX="center"
         anchorY="middle"
         maxWidth={20}
@@ -802,6 +802,8 @@ const NatureScene = memo(function NatureScene({ show3DOnly }: { show3DOnly: bool
       {/* <IntroCard /> */}
       {show3DOnly && <ExperienceSection />}
       {show3DOnly && <ProjectsSection />}
+      {/* <ExperienceSection />
+      <ProjectsSection /> */}
       <PathStones />
       <Forest />
       <Mountains position={[0, 0, 400]} />
@@ -999,7 +1001,7 @@ export default function Portfolio() {
 
       {!show3DOnly && (
         <div className="relative z-10">
-          <RegularPortfolio />
+          <RegularPortfolio setShow3DOnly={setShow3DOnly} />
         </div>
       )}
     </div>

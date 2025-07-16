@@ -11,9 +11,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        body: ["Inter", "system-ui", "sans-serif"],
-        heading: ["Inter", "system-ui", "sans-serif"],
+        sans: ["JetBrains Mono", "Inter", "system-ui", "sans-serif"],
+        body: ["JetBrains Mono", "Inter", "system-ui", "sans-serif"],
+        heading: ["JetBrains Mono", "Inter", "system-ui", "sans-serif"],
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1rem" }],

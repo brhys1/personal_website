@@ -16,9 +16,66 @@ import {
   Heart,
   ChevronDown,
 } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
-export default function RegularPortfolio() {
+// AnimatedScrambleText component
+function AnimatedScrambleText({ messages, interval = 3000, scrambleSpeed = 15 }: { messages: string[]; interval?: number; scrambleSpeed?: number }) {
+  const [displayed, setDisplayed] = useState(messages[0])
+  const [targetIdx, setTargetIdx] = useState(0)
+  const scrambleRef = useRef<NodeJS.Timeout | null>(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=<>?   ";
+
+  useEffect(() => {
+    function scrambleTo(target: string) {
+      let frame = 0;
+      let current = displayed;
+      if (scrambleRef.current) clearInterval(scrambleRef.current);
+      scrambleRef.current = setInterval(() => {
+        let result = "";
+        for (let i = 0; i < target.length; i++) {
+          if (frame < scrambleSpeed || current[i] !== target[i]) {
+            result += chars[Math.floor(Math.random() * chars.length)];
+          } else {
+            result += target[i];
+          }
+        }
+        setDisplayed(result);
+        frame++;
+        if (frame > scrambleSpeed) {
+          setDisplayed(target);
+          if (scrambleRef.current) clearInterval(scrambleRef.current);
+        }
+      }, 40);
+    }
+    scrambleTo(messages[targetIdx]);
+    return () => {
+      if (scrambleRef.current) clearInterval(scrambleRef.current);
+    };
+    // eslint-disable-next-line
+  }, [targetIdx]);
+
+  useEffect(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setTargetIdx((idx) => (idx + 1) % messages.length);
+    }, interval);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+    // eslint-disable-next-line
+  }, [messages, interval]);
+
+  return (
+    <div className="mb-4 flex justify-center">
+      <span className="text-2xl md:text-3xl font-heading bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent drop-shadow-lg transition-all duration-500 min-h-[2.5rem]">
+        {displayed}
+      </span>
+    </div>
+  );
+}
+
+export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v: boolean) => void }) {
   const [aboutMode, setAboutMode] = useState<"professional" | "fun">("professional")
   const [scrollY, setScrollY] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -47,7 +104,7 @@ export default function RegularPortfolio() {
       category: "Technologies",
       items: ["Tableau", "AWS", "Git/Github", "Docker", "PostgreSQL", "Firebase", "Jupyter Notebook", "Google Cloud"],
       icon: Database,
-      color: "from-cyan-500 to-blue-500",
+      color: "from-cyan-500 to-green-500",
     },
     {
       category: "Frameworks",
@@ -64,7 +121,7 @@ export default function RegularPortfolio() {
         "Plotly",
       ],
       icon: Sparkles,
-      color: "from-purple-500 to-pink-500",
+      color: "from-green-500 to-emerald-500",
     },
   ]
 
@@ -121,9 +178,9 @@ export default function RegularPortfolio() {
       highlights: [
         "Implemented Google Maps API for geo-optimization and created REST APIs for CRUD operations and data matching.",
       ],
-      github: "#",
-      demo: "#",
-      gradient: "from-blue-600 to-cyan-600",
+      github: "https://github.com/brhys1/mcc-carpools",
+      demo: "https://mcc-carpools.vercel.app/",
+      gradient: "from-blue-600 to-green-600",
     },
     {
       title: "KTP Spotify Playlist Generator",
@@ -133,9 +190,9 @@ export default function RegularPortfolio() {
       highlights: [
         "Built a custom TF-IDF-based classifier for party music that achieved 73% accuracy; integrated with personal user data.",
       ],
-      github: "#",
+      github: "https://github.com/brhys1/spotify_project",
       demo: "#",
-      gradient: "from-indigo-600 to-purple-600",
+      gradient: "from-blue-600 to-green-600",
     },
     {
       title: "MapReduce Simulator & Search Engine",
@@ -147,17 +204,17 @@ export default function RegularPortfolio() {
       ],
       github: "#",
       demo: "#",
-      gradient: "from-purple-600 to-pink-600",
+      gradient: "from-blue-600 to-green-600",
     },
     {
       title: "ML Cuisine Classifier",
       description:
-        "Developed and optimized an ML pipeline using scikit-learn, integrating TF-IDF, Random Forest, K-fold testing, and K-Nearest Neighbors (KNN) to bring classification accuracy to 83%.",
+        "Cleaned and preprocessed data, feature engineered, and optimized an ML pipeline; classification accuracy 83%.",
       technologies: ["scikit-learn", "TF-IDF", "Random Forest", "KNN"],
       highlights: [],
-      github: "#",
-      demo: "#",
-      gradient: "from-cyan-600 to-blue-600",
+      github: "https://github.com/nkavya00/recipes-and-cuisines-analysis",
+      demo: "https://nkavya00.github.io/recipes-and-cuisines-analysis/",
+      gradient: "from-blue-600 to-green-600",
     },
   ]
 
@@ -170,22 +227,6 @@ export default function RegularPortfolio() {
 
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Floating Particles */}
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className={`absolute w-2 h-2 bg-white/20 rounded-full animate-pulse ${
-                isLoaded ? "animate-bounce" : "opacity-0"
-              }`}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${3 + Math.random() * 2}s`,
-              }}
-            />
-          ))}
-
           {/* Gradient Orbs */}
           <div
             className={`absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl transition-all duration-2000 ${
@@ -272,7 +313,7 @@ export default function RegularPortfolio() {
 
           {/* Enhanced Action Buttons */}
           <div
-            className={`flex justify-center gap-6 mb-16 transition-all duration-1000 delay-1100 ${
+            className={`flex justify-center gap-6 mb-12 transition-all duration-1000 delay-1100 ${
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
@@ -294,6 +335,24 @@ export default function RegularPortfolio() {
             </a>
           </div>
 
+          
+
+          {/* Explore in 3D Button */}
+          {/* Animated Scramble Text above the button */}
+          {setShow3DOnly && (
+            <AnimatedScrambleText messages={["Want to see something cool?", "Want check out something awesome?", "Want to explore my world?", "Mind if I show you something cool?", "This took me too much time, check it out!"]} />
+          )}
+          {setShow3DOnly && (
+            <div className="flex justify-center mb-12">
+              <Button
+                onClick={() => setShow3DOnly(true)}
+                className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-16 py-8 rounded-lg shadow-lg hover:from-blue-700 hover:to-green-700 transition-colors text-xl font-medium"
+              >
+                Explore in 3D
+              </Button>
+            </div>
+          )}
+
           {/* Enhanced Scroll Indicator */}
           <div
             className={`transition-all duration-1000 delay-1300 ${
@@ -301,8 +360,7 @@ export default function RegularPortfolio() {
             }`}
           >
             <div className="flex flex-col items-center">
-              <p className="text-white/70 text-sm font-body mb-2">Scroll to explore</p>
-              <div className="animate-bounce">
+              <div className="animate-bounce mt-4">
                 <ChevronDown className="w-8 h-8 text-white/60 mx-auto" />
               </div>
             </div>
@@ -313,15 +371,15 @@ export default function RegularPortfolio() {
       {/* Main Content with Consistent Backdrop */}
       <div className="relative">
         {/* Consistent Backdrop */}
-        <div className="absolute inset-0 bg-white/85 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-200/80 via-green-200/80 to-blue-100/80 backdrop-blur-md"></div>
 
         {/* Content Container */}
-        <div className="relative max-w-6xl mx-auto px-4">
+        <div className="relative max-w-7xl mx-auto px-4">
           {/* About Me Section - Starts off screen */}
-          <section className="py-20">
-            <div className="grid md:grid-cols-3 gap-8">
+          <section className="py-10">
+            <div className="grid md:grid-cols-2 gap-8">
               {/* About Me Content */}
-              <div className="md:col-span-2">
+              <div className="md:col-span-1">
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-3xl text-slate-800 font-heading">About Me</h2>
@@ -330,7 +388,7 @@ export default function RegularPortfolio() {
                         variant={aboutMode === "professional" ? "default" : "ghost"}
                         size="sm"
                         onClick={() => setAboutMode("professional")}
-                        className={`font-medium-body ${aboutMode === "professional" ? "bg-blue-600 text-white" : "text-slate-600"}`}
+                        className={`font-medium-body ${aboutMode === "professional" ? "bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-full" : "text-slate-600"}`}
                       >
                         <User className="w-4 h-4 mr-1" />
                         Professional
@@ -339,7 +397,7 @@ export default function RegularPortfolio() {
                         variant={aboutMode === "fun" ? "default" : "ghost"}
                         size="sm"
                         onClick={() => setAboutMode("fun")}
-                        className={`font-medium-body ${aboutMode === "fun" ? "bg-blue-600 text-white" : "text-slate-600"}`}
+                        className={`font-medium-body ${aboutMode === "fun" ? "bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-full" : "text-slate-600"}`}
                       >
                         <Heart className="w-4 h-4 mr-1" />
                         Fun
@@ -365,7 +423,7 @@ export default function RegularPortfolio() {
                     <div className="text-slate-700 leading-relaxed font-body space-y-4">
                       <p>
                         I love nature and being outside and enjoying new places, especially the mountains. Skiing, rock
-                        climbing, biking, and hiking are all places you will fine me when I'm not at my computer.
+                        climbing, biking, and hiking are where you'll find me when I'm not at my computer.
                       </p>
                       <p>
                         I'm also a huge Harry Potter fan and love to read and discuss the books. I kill it at Harry
@@ -373,9 +431,8 @@ export default function RegularPortfolio() {
                         I'm too into it...
                       </p>
                       <p>
-                        I really enjoy playing card games and board games. From playing hearts with my family to playing
-                        poker with my friends, I'm always exctied for a game night. If you have any game
-                        recommendations, I would love to learn.
+                        I really enjoy playing card games and board games. From playing hearts with my family to
+                        poker with my friends, I'm always excited for a game night. I love learning new ones too!
                       </p>
                     </div>
                   )}
@@ -383,28 +440,68 @@ export default function RegularPortfolio() {
               </div>
 
               {/* Image Gallery */}
-              <div className="relative w-full h-80">
-                <div className="absolute bottom-0 right-0 w-48 h-48 rounded-lg overflow-hidden shadow-lg z-0">
-                  <img
-                    src={aboutMode == "professional" ? "/rhys_kavya_dp.jpg" : "/skiing_pic.jpg"}
-                    alt="Rhys and Kavya DP"
-                    className="object-cover w-full h-full"
-                  />
+              {aboutMode == "professional" ? (
+                <div className="relative w-full h-96 md:col-span-1">
+                  <div className="absolute top-0 right-0 w-60 h-48 rounded-lg overflow-hidden shadow-xl z-0">
+                    <img
+                      src="/bean_pic.jpg"
+                      alt="Bean"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-60 rounded-lg overflow-hidden shadow-xl z-10">
+                    <img
+                      src="/atlas_board_pic.jpg"
+                      alt="Atlas Board"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="absolute top-0 left-0 w-60 h-48 rounded-lg overflow-hidden shadow-lg z-0">
+                    <img
+                      src="/smiling_bid_night.jpg"
+                      alt="Bid Night"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
                 </div>
-                <div className="absolute top-0 left-0 w-48 h-48 rounded-lg overflow-hidden shadow-xl z-10">
-                  <img
-                    src={aboutMode == "professional" ? "/friends_pic.jpg" : "/climbing_pic.jpg"}
-                    alt="MCC"
-                    className="object-cover w-full h-full"
-                  />
+              ) : (
+                <div className="relative w-full h-96 md:col-span-1">
+                  <div className="absolute top-0 left-0 w-60 h-48 rounded-lg overflow-hidden shadow-xl z-0">
+                    <img
+                      src="/friends_pic.jpg"
+                      alt="Friends"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-1/3 -translate-x-1/3 w-60 h-48 rounded-lg overflow-hidden shadow-lg z-0">
+                    <img
+                      src="/climbing_pic.jpg"
+                      alt="Climbing"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="absolute top-0 left-2/3 -translate-x-2/3 w-60 h-48 rounded-lg overflow-hidden shadow-xl z-10">
+                    <img
+                      src="/skiing_pic.jpg"
+                      alt="Skiing"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="absolute bottom-0 right-0 w-60 h-48 rounded-lg overflow-hidden shadow-xl z-10">
+                    <img
+                      src="/rhys_kavya_dp.jpg"
+                      alt="Rhys and Kavya DP"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </section>
 
           {/* Skills Section */}
-          <section className="py-20">
-            <h2 className="text-3xl text-center text-slate-800 font-heading mb-12">Skills & Expertise</h2>
+          <section className="py-10">
+            <h2 className="text-3xl text-center text-slate-800 font-heading mb-12">Skills</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {skills.map((skillGroup, index) => {
                 const IconComponent = skillGroup.icon
@@ -424,7 +521,7 @@ export default function RegularPortfolio() {
                         <Badge
                           key={skillIndex}
                           variant="secondary"
-                          className="bg-blue-100/80 text-blue-800 hover:bg-blue-200/80 transition-colors duration-300 text-xs font-medium-body"
+                          className="bg-gradient-to-r from-blue-100 to-green-100 text-blue-800 hover:from-blue-200 hover:to-green-200 transition-colors duration-300 text-xs font-medium-body"
                         >
                           {skill}
                         </Badge>
@@ -437,26 +534,35 @@ export default function RegularPortfolio() {
           </section>
 
           {/* Experience Section */}
-          <section className="py-20">
+          <section className="py-10">
             <h2 className="text-3xl text-center text-slate-800 font-heading mb-12">Experience</h2>
             <div className="relative">
-              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 to-indigo-400"></div>
+              <div className="absolute top-4 left-12 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 to-green-400"></div>
               {experiences.map((exp, index) => (
-                <div key={index} className="relative mb-8 ml-12">
-                  <div className="absolute -left-8 top-4 w-4 h-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full border-2 border-white shadow"></div>
-                  <div className="bg-white/60 backdrop-blur-sm border border-white/20 rounded-lg p-6 hover:shadow-lg transition-all duration-300">
+                <div key={index} className="relative mb-8 ml-28">
+                  {/* Circular company logo, optionally wrapped in a link */}
+                  <div className="absolute -left-28 top-4 w-24 h-24 flex items-center justify-center rounded-full bg-white border-2 border-blue-300 shadow overflow-hidden">
+                    {exp.icon ? (
+                      <a href={exp.icon} target="_blank" rel="noopener noreferrer">
+                        <img src={exp.icon} alt={exp.company + ' logo'} className="w-16 h-16 object-contain" />
+                      </a>
+                    ) : (
+                      <img src={exp.icon} alt={exp.company + ' logo'} className="w-16 h-16 object-contain" />
+                    )}
+                  </div>
+                  <div className="bg-white/60 left-24 backdrop-blur-sm border border-white/20 rounded-lg p-6 hover:shadow-lg transition-all duration-300">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="text-lg font-heading text-slate-800">{exp.title}</h3>
-                        <p className="text-base font-medium-body text-blue-600">{exp.company}</p>
+                        <p className="text-base font-medium-body bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">{exp.company}</p>
                       </div>
                       <div className="text-right text-xs text-slate-500">
-                        <div className="flex items-center gap-1 bg-blue-50/80 px-2 py-1 rounded-full mb-1">
+                        <div className="flex items-center gap-1 bg-gradient-to-r from-blue-50 to-green-50 px-2 py-1 rounded-full mb-1 hover:bg-gradient-to-r hover:from-blue-200 hover:to-green-200 hover:scale-105 transition-all duration-200 cursor-pointer">
                           <Calendar className="w-3 h-3 text-blue-600" />
                           <span className="font-body">{exp.period}</span>
                         </div>
-                        <div className="flex items-center gap-1 bg-blue-50/80 px-2 py-1 rounded-full">
-                          <MapPin className="w-3 h-3 text-blue-600" />
+                        <div className="flex items-center gap-1 bg-gradient-to-r from-blue-50 to-green-50 px-2 py-1 rounded-full hover:bg-gradient-to-r hover:from-blue-200 hover:to-green-200 hover:scale-105 transition-all duration-200 cursor-pointer">
+                          <MapPin className="w-3 h-3 text-green-600" />
                           <span className="font-body">{exp.location}</span>
                         </div>
                       </div>
@@ -469,7 +575,7 @@ export default function RegularPortfolio() {
           </section>
 
           {/* Projects Section */}
-          <section className="py-20">
+          <section className="py-10">
             <h2 className="text-3xl text-center text-slate-800 font-heading mb-12">Featured Projects</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {projects.map((project, index) => (
@@ -489,7 +595,7 @@ export default function RegularPortfolio() {
                           <Badge
                             key={techIndex}
                             variant="outline"
-                            className="text-xs border-blue-200 text-blue-700 font-body"
+                            className="text-xs border-blue-200 text-blue-700 font-body hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50"
                           >
                             {tech}
                           </Badge>
@@ -497,37 +603,67 @@ export default function RegularPortfolio() {
                       </div>
                     </div>
 
-                    {project.highlights.length > 0 && (
-                      <div className="mb-4">
-                        <h4 className="font-medium-body text-slate-700 mb-2 text-sm">Key Highlights:</h4>
-                        <ul className="space-y-1">
-                          {project.highlights.map((highlight, hlIndex) => (
-                            <li key={hlIndex} className="flex items-start gap-2 text-slate-600 text-xs">
-                              <div
-                                className={`w-1.5 h-1.5 bg-gradient-to-r ${project.gradient} rounded-full mt-1.5 flex-shrink-0`}
-                              ></div>
-                              <span className="font-body">{highlight}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
                     <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-xs border-blue-200 text-blue-700 hover:bg-blue-50 bg-transparent font-medium-body"
-                      >
-                        <Github className="w-3 h-3 mr-1" /> Code
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-xs border-blue-200 text-blue-700 hover:bg-blue-50 bg-transparent font-medium-body"
-                      >
-                        <ExternalLink className="w-3 h-3 mr-1" /> Demo
-                      </Button>
+                      {/* GitHub Button */}
+                      {project.github && project.github !== "#" ? (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs border-blue-200 text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 bg-transparent font-medium-body"
+                          >
+                            <Github className="w-3 h-3 mr-1" /> Code
+                          </Button>
+                        </a>
+                      ) : (
+                        <div className="relative">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="peer text-xs border-blue-200 text-blue-700 bg-transparent font-medium-body cursor-not-allowed"
+                            tabIndex={-1}
+                          >
+                            <Github className="w-3 h-3 mr-1" /> Code
+                          </Button>
+                          <div className="absolute left-1/2 -translate-x-1/2 -top-10 z-20 opacity-0 peer-hover:opacity-100 pointer-events-none transition-opacity duration-200 bg-slate-800 text-white text-xs rounded px-3 py-1 shadow-lg whitespace-nowrap">
+                            Contact me for code
+                          </div>
+                        </div>
+                      )}
+                      {/* Demo Button */}
+                      {project.demo && project.demo !== "#" ? (
+                        <a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs border-green-200 text-green-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 bg-transparent font-medium-body"
+                          >
+                            <ExternalLink className="w-3 h-3 mr-1" /> Demo
+                          </Button>
+                        </a>
+                      ) : (
+                        <div className="relative">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="peer text-xs border-green-200 text-green-700 bg-transparent font-medium-body cursor-not-allowed"
+                            tabIndex={-1}
+                          >
+                            <ExternalLink className="w-3 h-3 mr-1" /> Demo
+                          </Button>
+                          <div className="absolute left-1/2 -translate-x-1/2 -top-10 z-20 opacity-0 peer-hover:opacity-100 pointer-events-none transition-opacity duration-200 bg-slate-800 text-white text-xs rounded px-3 py-1 shadow-lg whitespace-nowrap">
+                            Contact me for demo
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -536,7 +672,7 @@ export default function RegularPortfolio() {
           </section>
 
           {/* Contact Section */}
-          <section className="py-20">
+          <section className="py-10">
             <div className="text-center">
               <div className="bg-white/60 backdrop-blur-sm border border-white/20 rounded-lg p-8">
                 <h2 className="text-3xl font-heading text-slate-800 mb-4">Let's Connect</h2>
@@ -544,19 +680,26 @@ export default function RegularPortfolio() {
                   Interested in collaborating on sustainability projects or discussing data science opportunities?
                 </p>
                 <div className="flex justify-center gap-4">
-                  <Button
+                  <a
+                    href="https://mail.google.com/mail/?view=cm&to=brhys@umich.edu"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
                     size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium-body"
+                    className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium-body"
                   >
                     <Mail className="w-5 h-5 mr-2" /> Get In Touch
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-blue-200 text-slate-800 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 bg-transparent font-medium-body"
-                  >
-                    <Linkedin className="w-5 h-5 mr-2" /> LinkedIn
-                  </Button>
+                  </a>
+                  <a href="https://linkedin.com/in/rhys-burman" target="_blank" rel="noopener noreferrer">
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-8 py-3 border-0"
+                    >
+                      <Linkedin className="w-5 h-5 mr-2" /> LinkedIn
+                    </Button>
+                  </a>
                 </div>
               </div>
             </div>
