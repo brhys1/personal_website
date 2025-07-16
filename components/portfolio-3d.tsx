@@ -21,6 +21,7 @@ const TEXT_COLORS = {
   company: "#1e40af", // dark blue
   title: "#3b82f6", // medium blue
   content: "#1f2937", // dark gray
+  heading: "#0f172a", // slate-900
 } as const
 
 /**
@@ -171,6 +172,7 @@ function ExperienceDisplay({
           anchorX="center"
           anchorY="middle"
           maxWidth={4}
+          fontWeight={600}
         >
           {company}
         </Text>
@@ -183,6 +185,7 @@ function ExperienceDisplay({
           anchorX="center"
           anchorY="middle"
           maxWidth={4}
+          fontWeight={500}
         >
           {title}
         </Text>
@@ -268,6 +271,7 @@ function ProjectDisplay({ position, rotation, title, description, technologies, 
           anchorX="center"
           anchorY="middle"
           maxWidth={4}
+          fontWeight={600}
         >
           {title}
         </Text>
@@ -281,6 +285,7 @@ function ProjectDisplay({ position, rotation, title, description, technologies, 
           anchorY="middle"
           maxWidth={4.5}
           textAlign="center"
+          fontWeight={500}
         >
           {description}
         </Text>
@@ -377,6 +382,7 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; ro
           anchorX="center"
           anchorY="middle"
           maxWidth={5}
+          fontWeight={600}
         >
           Rhys Burman
         </Text>
@@ -388,6 +394,7 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; ro
           anchorX="center"
           anchorY="middle"
           maxWidth={5}
+          fontWeight={500}
         >
           Data Scientist & Sustainability
         </Text>
@@ -508,53 +515,53 @@ function InterestPedestal({
   }
 
   return (
-    <>  
-    <Text
+    <>
+      <Text
         position={[-8, 8, 0]}
         rotation={[0, Math.PI, 0]}
         fontSize={2}
         color="#ffffff"
         anchorX="center"
         anchorY="middle"
-        maxWidth={20} 
+        maxWidth={20}
         fontWeight={700}
       >
         Interests
       </Text>
-    <group rotation={rotation} ref={groupRef}>
-      {/* Platform base */}
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[1, 1.2, 0.2, 8]} />
-        <meshStandardMaterial color={platformColor} />
-      </mesh>
+      <group rotation={rotation} ref={groupRef}>
+        {/* Platform base */}
+        <mesh position={[0, 0, 0]}>
+          <cylinderGeometry args={[1, 1.2, 0.2, 8]} />
+          <meshStandardMaterial color={platformColor} />
+        </mesh>
 
-      {/* Light beam */}
-      <mesh position={[0, 1, 0]}>
-        <cylinderGeometry args={[0.1, 1, 2, 8, 1, true]} />
-        <meshStandardMaterial color={platformColor} transparent opacity={0.1} side={THREE.DoubleSide} />
-      </mesh>
+        {/* Light beam */}
+        <mesh position={[0, 1, 0]}>
+          <cylinderGeometry args={[0.1, 1, 2, 8, 1, true]} />
+          <meshStandardMaterial color={platformColor} transparent opacity={0.1} side={THREE.DoubleSide} />
+        </mesh>
 
-      {/* Rotating ring */}
-      <mesh position={[0, 0.5, 0]} rotation={[0, time.current * 0.5 + (position[0] < -10 ? Math.PI : 0), 0]}>
-        <torusGeometry args={[1.1, 0.05, 16, 32]} />
-        <meshStandardMaterial color={platformColor} />
-      </mesh>
+        {/* Rotating ring */}
+        <mesh position={[0, 0.5, 0]} rotation={[0, time.current * 0.5 + (position[0] < -10 ? Math.PI : 0), 0]}>
+          <torusGeometry args={[1.1, 0.05, 16, 32]} />
+          <meshStandardMaterial color={platformColor} />
+        </mesh>
 
-      {/* Icon */}
-      {renderIcon()}
+        {/* Icon */}
+        {renderIcon()}
 
-      {/* Label */}
-      <Text
-        position={[0, 0.3, 1.3]}
-        fontSize={0.2}
-        color={TEXT_COLORS.content}
-        fontWeight={700}
-        anchorX="center"
-        anchorY="middle"
-      >
-        {label}
-      </Text>
-    </group>
+        {/* Label */}
+        <Text
+          position={[0, 0.3, 1.3]}
+          fontSize={0.2}
+          color={TEXT_COLORS.content}
+          fontWeight={700}
+          anchorX="center"
+          anchorY="middle"
+        >
+          {label}
+        </Text>
+      </group>
     </>
   )
 }
@@ -567,10 +574,10 @@ function ExperienceSection() {
         position={[0, 8, 0]}
         rotation={[0, Math.PI, 0]}
         fontSize={2}
-        color="#ffffff"
+        color={TEXT_COLORS.heading}
         anchorX="center"
         anchorY="middle"
-        maxWidth={20} 
+        maxWidth={20}
         fontWeight={700}
       >
         EXPERIENCES
@@ -745,12 +752,28 @@ function IntroCard() {
       </mesh>
 
       {/* Title */}
-      <Text position={[0, 1.5, 0]} fontSize={0.8} color="#2563eb" anchorX="center" anchorY="middle" maxWidth={8}>
+      <Text
+        position={[0, 1.5, 0]}
+        fontSize={0.8}
+        color="#2563eb"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={8}
+        fontWeight={600}
+      >
         Rhys Burman
       </Text>
 
       {/* Subtitle */}
-      <Text position={[0, 0.5, 0]} fontSize={0.4} color="#3b82f6" anchorX="center" anchorY="middle" maxWidth={8}>
+      <Text
+        position={[0, 0.5, 0]}
+        fontSize={0.4}
+        color="#3b82f6"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={8}
+        fontWeight={500}
+      >
         Data Science & Sustainability
       </Text>
 
@@ -787,15 +810,19 @@ const NatureScene = memo(function NatureScene() {
   )
 })
 
-function RideCameraRig({ children, manualOffset, show3DOnly }: { children: React.ReactNode; manualOffset: number; show3DOnly: boolean }) {
+function RideCameraRig({
+  children,
+  manualOffset,
+  show3DOnly,
+}: { children: React.ReactNode; manualOffset: number; show3DOnly: boolean }) {
   const group = useRef<THREE.Group>(null!)
   const scroll = useScroll()
   const isMobile = useIsMobile()
 
   useFrame(() => {
     const offset = isMobile ? manualOffset : (scroll?.offset ?? 0)
-    const z = show3DOnly ? (offset * CORRIDOR_LEN) : -30
-    const y = show3DOnly ? (-1.5 + offset * -3) : -10 
+    const z = show3DOnly ? offset * CORRIDOR_LEN : -30
+    const y = show3DOnly ? -1.5 + offset * -3 : -10
     const x = show3DOnly ? 0 : 0
 
     if (group.current) {
@@ -844,7 +871,7 @@ export default function Portfolio() {
     >
       {/* View Toggle Button */}
       <button
-        onClick={() => setShow3DOnly(prev => !prev)}
+        onClick={() => setShow3DOnly((prev) => !prev)}
         className="fixed top-8 right-8 bg-slate-900 px-6 py-3 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 hover:bg-slate-800 transition-colors"
       >
         {show3DOnly ? "Back to Basic View" : "Explore in 3D"}
