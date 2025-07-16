@@ -21,11 +21,19 @@ import { useState, useEffect } from "react"
 export default function RegularPortfolio() {
   const [aboutMode, setAboutMode] = useState<"professional" | "fun">("professional")
   const [scrollY, setScrollY] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
     window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+
+    // Trigger animations after component mounts
+    const timer = setTimeout(() => setIsLoaded(true), 100)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      clearTimeout(timer)
+    }
   }, [])
 
   const skills = [
@@ -156,60 +164,148 @@ export default function RegularPortfolio() {
   return (
     <div className="min-h-screen bg-transparent font-body relative">
       {/* Floating Hero Section */}
-      <section className="relative h-screen flex items-center justify-center px-4">
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        
-        <div className="text-center z-10">
-          <div className="mb-8">
-            <img
-              src="/headshot_f24_cropped.jpg"
-              alt="Rhys Burman Headshot"
-              className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-2xl object-cover mx-auto mb-6"
+      <section className="relative h-screen flex items-center justify-center px-4 overflow-hidden">
+        {/* Enhanced Background with Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60 backdrop-blur-sm"></div>
+
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Floating Particles */}
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className={`absolute w-2 h-2 bg-white/20 rounded-full animate-pulse ${
+                isLoaded ? "animate-bounce" : "opacity-0"
+              }`}
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`,
+              }}
             />
+          ))}
+
+          {/* Gradient Orbs */}
+          <div
+            className={`absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl transition-all duration-2000 ${
+              isLoaded ? "scale-100 opacity-100" : "scale-50 opacity-0"
+            }`}
+          />
+          <div
+            className={`absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl transition-all duration-2000 delay-500 ${
+              isLoaded ? "scale-100 opacity-100" : "scale-50 opacity-0"
+            }`}
+          />
+        </div>
+
+        <div
+          className={`text-center z-10 transition-all duration-1000 ${
+            isLoaded ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+          }`}
+        >
+          {/* Profile Image with Enhanced Animation */}
+          <div
+            className={`mb-8 transition-all duration-1000 delay-300 ${
+              isLoaded ? "scale-100 opacity-100" : "scale-75 opacity-0"
+            }`}
+          >
+            <div className="relative">
+              {/* Glowing Ring */}
+              <div className="absolute inset-0 w-36 h-36 md:w-44 md:h-44 mx-auto rounded-full bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 animate-spin-slow opacity-75 blur-sm"></div>
+              <img
+                src="/headshot_f24_cropped.jpg"
+                alt="Rhys Burman Headshot"
+                className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-2xl object-cover mx-auto mb-6 hover:scale-105 transition-transform duration-300"
+              />
+            </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-heading text-white mb-8 drop-shadow-lg">Rhys Burman</h1>
-          <p className="text-xl md:text-2xl text-white/90 font-medium-body mb-6 drop-shadow-md">
-            Data Science & Sustainability
-          </p>
+          {/* Name with Gradient Text */}
+          <h1
+            className={`text-5xl md:text-7xl font-heading bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent mb-4 drop-shadow-2xl transition-all duration-1000 delay-500 ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            }`}
+          >
+            Rhys Burman
+          </h1>
 
-          <div className="flex flex-wrap justify-center items-center gap-4 text-white/80 mb-8">
-            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-              <MapPin className="w-4 h-4" />
-              <span className="text-sm font-body">Ann Arbor, MI</span>
+          {/* Subtitle with Enhanced Styling */}
+          <div
+            className={`relative mb-8 transition-all duration-1000 delay-700 ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            }`}
+          >
+            <p className="text-xl md:text-3xl text-white font-medium-body drop-shadow-lg">
+              <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">
+                Data Science
+              </span>
+              <span className="text-white/90 mx-2">&</span>
+              <span className="bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent">
+                Sustainability
+              </span>
+            </p>
+            {/* Underline Animation */}
+            <div className="mt-2 mx-auto w-32 h-1 bg-gradient-to-r from-blue-400 to-green-400 rounded-full animate-pulse"></div>
+          </div>
+
+          {/* Contact Info with Better Contrast */}
+          <div
+            className={`flex flex-wrap justify-center items-center gap-4 text-white mb-8 transition-all duration-1000 delay-900 ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            }`}
+          >
+            <div className="flex items-center gap-2 bg-white/25 backdrop-blur-md px-4 py-3 rounded-full border border-white/20 hover:bg-white/30 transition-all duration-300 shadow-lg">
+              <MapPin className="w-4 h-4 text-blue-300" />
+              <span className="text-sm font-body font-medium">Ann Arbor, MI</span>
             </div>
             <a
               href="https://mail.google.com/mail/?view=cm&to=brhys@umich.edu"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-colors"
+              className="flex items-center gap-2 bg-white/25 backdrop-blur-md px-4 py-3 rounded-full border border-white/20 hover:bg-white/35 hover:scale-105 transition-all duration-300 shadow-lg"
             >
-              <Mail className="w-4 h-4" />
-              <span className="text-sm font-body">brhys@umich.edu</span>
+              <Mail className="w-4 h-4 text-green-300" />
+              <span className="text-sm font-body font-medium">brhys@umich.edu</span>
             </a>
           </div>
 
-          <div className="flex justify-center gap-4 mb-12">
+          {/* Enhanced Action Buttons */}
+          <div
+            className={`flex justify-center gap-6 mb-16 transition-all duration-1000 delay-1100 ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            }`}
+          >
             <a href="https://github.com/brhys1" target="_blank" rel="noopener noreferrer">
               <Button
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/20 backdrop-blur-sm bg-white/10 font-medium-body"
+                size="lg"
+                className="bg-white/20 backdrop-blur-md border-2 border-white/30 text-white hover:bg-white/30 hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-8 py-3"
               >
-                <Github className="w-4 h-4 mr-2" /> GitHub
+                <Github className="w-5 h-5 mr-2" /> GitHub
               </Button>
             </a>
             <a href="https://linkedin.com/in/rhys-burman" target="_blank" rel="noopener noreferrer">
               <Button
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/20 backdrop-blur-sm bg-white/10 font-medium-body"
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-8 py-3 border-0"
               >
-                <Linkedin className="w-4 h-4 mr-2" /> LinkedIn
+                <Linkedin className="w-5 h-5 mr-2" /> LinkedIn
               </Button>
             </a>
           </div>
 
-          <div className="animate-bounce">
-            <ChevronDown className="w-8 h-8 text-white/60 mx-auto" />
+          {/* Enhanced Scroll Indicator */}
+          <div
+            className={`transition-all duration-1000 delay-1300 ${
+              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+            }`}
+          >
+            <div className="flex flex-col items-center">
+              <p className="text-white/70 text-sm font-body mb-2">Scroll to explore</p>
+              <div className="animate-bounce">
+                <ChevronDown className="w-8 h-8 text-white/60 mx-auto" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -217,7 +313,7 @@ export default function RegularPortfolio() {
       {/* Main Content with Consistent Backdrop */}
       <div className="relative">
         {/* Consistent Backdrop */}
-        <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-white/85 backdrop-blur-sm"></div>
 
         {/* Content Container */}
         <div className="relative max-w-6xl mx-auto px-4">
