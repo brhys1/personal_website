@@ -24,29 +24,33 @@ function AnimatedScrambleText({ messages, interval = 3000, scrambleSpeed = 15 }:
   const [targetIdx, setTargetIdx] = useState(0)
   const scrambleRef = useRef<NodeJS.Timeout | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=<>?   ";
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=<>?";
 
   useEffect(() => {
     function scrambleTo(target: string) {
       let frame = 0;
       let current = displayed;
       if (scrambleRef.current) clearInterval(scrambleRef.current);
+    
+      const SCRAMBLE_LENGTH = 25;
+      const paddedTarget = target.padEnd(SCRAMBLE_LENGTH, ' ');
+    
       scrambleRef.current = setInterval(() => {
         let result = "";
-        for (let i = 0; i < target.length; i++) {
-          if (frame < scrambleSpeed || current[i] !== target[i]) {
+        for (let i = 0; i < SCRAMBLE_LENGTH; i++) {
+          if (frame < scrambleSpeed || current[i] !== paddedTarget[i]) {
             result += chars[Math.floor(Math.random() * chars.length)];
           } else {
-            result += target[i];
+            result += paddedTarget[i];
           }
         }
         setDisplayed(result);
         frame++;
         if (frame > scrambleSpeed) {
-          setDisplayed(target);
+          setDisplayed(paddedTarget);
           if (scrambleRef.current) clearInterval(scrambleRef.current);
         }
-      }, 40);
+      }, 20);
     }
     scrambleTo(messages[targetIdx]);
     return () => {
@@ -221,7 +225,7 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
   return (
     <div className="min-h-screen bg-transparent font-body relative">
       {/* Floating Hero Section */}
-      <section className="relative h-screen flex items-center justify-center px-4 overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden py-8">
         {/* Enhanced Background with Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60 backdrop-blur-sm"></div>
 
@@ -229,42 +233,42 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
         <div className="absolute inset-0 overflow-hidden">
           {/* Gradient Orbs */}
           <div
-            className={`absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl transition-all duration-2000 ${
-              isLoaded ? "scale-100 opacity-100" : "scale-50 opacity-0"
-            }`}
+            className={`absolute top-1/4 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl transition-all duration-2000 ${
+            isLoaded ? "scale-100 opacity-100" : "scale-50 opacity-0"
+          }`}
           />
           <div
-            className={`absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl transition-all duration-2000 delay-500 ${
-              isLoaded ? "scale-100 opacity-100" : "scale-50 opacity-0"
-            }`}
+            className={`absolute bottom-1/4 right-1/4 w-56 h-56 md:w-80 md:h-80 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl transition-all duration-2000 delay-500 ${
+            isLoaded ? "scale-100 opacity-100" : "scale-50 opacity-0"
+          }`}
           />
         </div>
 
         <div
-          className={`text-center z-10 transition-all duration-1000 ${
+          className={`text-center z-10 transition-all duration-1000 max-w-4xl mx-auto ${
             isLoaded ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
           }`}
         >
           {/* Profile Image with Enhanced Animation */}
           <div
-            className={`mb-8 transition-all duration-1000 delay-300 ${
+            className={`mb-6 md:mb-8 transition-all duration-1000 delay-300 ${
               isLoaded ? "scale-100 opacity-100" : "scale-75 opacity-0"
             }`}
           >
             <div className="relative">
               {/* Glowing Ring */}
-              <div className="absolute inset-0 w-36 h-36 md:w-44 md:h-44 mx-auto rounded-full bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 animate-spin-slow opacity-75 blur-sm"></div>
+              <div className="absolute inset-0 w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-44 lg:h-44 mx-auto rounded-full bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 animate-spin-slow opacity-75 blur-sm"></div>
               <img
                 src="/headshot_f24_cropped.jpg"
                 alt="Rhys Burman Headshot"
-                className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-2xl object-cover mx-auto mb-6 hover:scale-105 transition-transform duration-300"
+                className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full border-4 border-white shadow-2xl object-cover mx-auto mb-4 md:mb-6 hover:scale-105 transition-transform duration-300"
               />
             </div>
           </div>
 
           {/* Name with Gradient Text */}
           <h1
-            className={`text-5xl md:text-7xl font-heading bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent mb-4 drop-shadow-2xl transition-all duration-1000 delay-500 ${
+            className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent mb-3 md:mb-4 drop-shadow-2xl transition-all duration-1000 delay-500 ${
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
@@ -273,11 +277,11 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
 
           {/* Subtitle with Enhanced Styling */}
           <div
-            className={`relative mb-8 transition-all duration-1000 delay-700 ${
+            className={`relative mb-6 md:mb-8 transition-all duration-1000 delay-700 ${
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
-            <p className="text-xl md:text-3xl text-white font-medium-body drop-shadow-lg">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-medium-body drop-shadow-lg">
               <span className="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">
                 Data Science
               </span>
@@ -287,40 +291,40 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
               </span>
             </p>
             {/* Underline Animation */}
-            <div className="mt-2 mx-auto w-32 h-1 bg-gradient-to-r from-blue-400 to-green-400 rounded-full animate-pulse"></div>
+            <div className="mt-2 mx-auto w-24 sm:w-28 md:w-32 h-1 bg-gradient-to-r from-blue-400 to-green-400 rounded-full animate-pulse"></div>
           </div>
 
           {/* Contact Info with Better Contrast */}
           <div
-            className={`flex flex-wrap justify-center items-center gap-4 text-white mb-8 transition-all duration-1000 delay-900 ${
+            className={`flex flex-wrap justify-center items-center gap-2 sm:gap-4 text-white mb-6 md:mb-8 transition-all duration-1000 delay-900 ${
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
-            <div className="flex items-center gap-2 bg-white/25 backdrop-blur-md px-4 py-3 rounded-full border border-white/20 hover:bg-white/30 transition-all duration-300 shadow-lg">
+            <div className="flex items-center gap-1 sm:gap-2 bg-white/25 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-3 rounded-full border border-white/20 hover:bg-white/30 transition-all duration-300 shadow-lg">
               <MapPin className="w-4 h-4 text-blue-300" />
-              <span className="text-sm font-body font-medium">Ann Arbor, MI</span>
+              <span className="text-xs sm:text-sm font-body font-medium">Ann Arbor, MI</span>
             </div>
             <a
               href="https://mail.google.com/mail/?view=cm&to=brhys@umich.edu"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-white/25 backdrop-blur-md px-4 py-3 rounded-full border border-white/20 hover:bg-white/35 hover:scale-105 transition-all duration-300 shadow-lg"
+              className="flex items-center gap-1 sm:gap-2 bg-white/25 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-3 rounded-full border border-white/20 hover:bg-white/35 hover:scale-105 transition-all duration-300 shadow-lg"
             >
               <Mail className="w-4 h-4 text-green-300" />
-              <span className="text-sm font-body font-medium">brhys@umich.edu</span>
+              <span className="text-xs sm:text-sm font-body font-medium">brhys@umich.edu</span>
             </a>
           </div>
 
           {/* Enhanced Action Buttons */}
           <div
-            className={`flex justify-center gap-6 mb-12 transition-all duration-1000 delay-1100 ${
+            className={`flex justify-center gap-4 sm:gap-6 mb-12 md:mb-16 transition-all duration-1000 delay-1100 ${
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
             <a href="https://github.com/brhys1" target="_blank" rel="noopener noreferrer">
               <Button
                 size="lg"
-                className="bg-white/20 backdrop-blur-md border-2 border-white/30 text-white hover:bg-white/30 hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-8 py-3"
+                className="bg-white/20 backdrop-blur-md border-2 border-white/30 text-white hover:bg-white/30 hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-6 sm:px-8 py-2 sm:py-3 text-sm sm:text-base"
               >
                 <Github className="w-5 h-5 mr-2" /> GitHub
               </Button>
@@ -328,25 +332,24 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
             <a href="https://linkedin.com/in/rhys-burman" target="_blank" rel="noopener noreferrer">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-8 py-3 border-0"
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-6 sm:px-8 py-2 sm:py-3 border-0 text-sm sm:text-base"
               >
                 <Linkedin className="w-5 h-5 mr-2" /> LinkedIn
               </Button>
             </a>
           </div>
 
-          
-
-          {/* Explore in 3D Button */}
           {/* Animated Scramble Text above the button */}
           {setShow3DOnly && (
-            <AnimatedScrambleText messages={["Want to see something cool?", "Want check out something awesome?", "Want to explore my world?", "Mind if I show you something cool?", "This took me too much time, check it out!"]} />
+            <div className="mb-4 md:mb-6">
+              <AnimatedScrambleText messages={["Want to see something cool?", "Want check out something awesome?", "Want to explore my world?", "Mind if I show you something cool?", "This took me too much time, check it out!"]} />
+            </div>
           )}
           {setShow3DOnly && (
-            <div className="flex justify-center mb-12">
+            <div className="flex justify-center mb-8 md:mb-12">
               <Button
                 onClick={() => setShow3DOnly(true)}
-                className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-16 py-8 rounded-lg shadow-lg hover:from-blue-700 hover:to-green-700 transition-colors text-xl font-medium"
+                className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg shadow-lg hover:from-blue-700 hover:to-green-700 transition-colors text-xl sm:text-2xl md:text-3xl font-medium"
               >
                 Explore in 3D
               </Button>
@@ -360,8 +363,8 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
             }`}
           >
             <div className="flex flex-col items-center">
-              <div className="animate-bounce mt-4">
-                <ChevronDown className="w-8 h-8 text-white/60 mx-auto" />
+              <div className="animate-bounce mt-2 md:mt-4">
+                <ChevronDown className="w-6 h-6 sm:w-8 sm:h-8 text-white/60 mx-auto" />
               </div>
             </div>
           </div>
@@ -441,22 +444,22 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
 
               {/* Image Gallery */}
               {aboutMode == "professional" ? (
-                <div className="relative w-full h-96 md:col-span-1">
-                  <div className="absolute top-0 right-0 w-60 h-48 rounded-lg overflow-hidden shadow-xl z-0">
+                <div className="relative w-full h-64 sm:h-80 md:h-96 md:col-span-1">
+                  <div className="absolute top-0 right-0 w-32 h-24 sm:w-48 sm:h-36 md:w-60 md:h-48 rounded-lg overflow-hidden shadow-xl z-0">
                     <img
                       src="/bean_pic.jpg"
                       alt="Bean"
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-60 rounded-lg overflow-hidden shadow-xl z-10">
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-32 sm:w-72 sm:h-48 md:w-96 md:h-60 rounded-lg overflow-hidden shadow-xl z-10">
                     <img
                       src="/atlas_board_pic.jpg"
                       alt="Atlas Board"
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <div className="absolute top-0 left-0 w-60 h-48 rounded-lg overflow-hidden shadow-lg z-0">
+                  <div className="absolute top-0 left-0 w-32 h-24 sm:w-48 sm:h-36 md:w-60 md:h-48 rounded-lg overflow-hidden shadow-lg z-0">
                     <img
                       src="/smiling_bid_night.jpg"
                       alt="Bid Night"
@@ -465,29 +468,29 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
                   </div>
                 </div>
               ) : (
-                <div className="relative w-full h-96 md:col-span-1">
-                  <div className="absolute top-0 left-0 w-60 h-48 rounded-lg overflow-hidden shadow-xl z-0">
+                <div className="relative w-full h-64 sm:h-80 md:h-96 md:col-span-1">
+                  <div className="absolute top-0 left-0 w-32 h-24 sm:w-48 sm:h-36 md:w-60 md:h-48 rounded-lg overflow-hidden shadow-xl z-0">
                     <img
                       src="/friends_pic.jpg"
                       alt="Friends"
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <div className="absolute bottom-0 left-1/3 -translate-x-1/3 w-60 h-48 rounded-lg overflow-hidden shadow-lg z-0">
+                  <div className="absolute bottom-0 left-1/3 -translate-x-1/3 w-32 h-24 sm:w-48 sm:h-36 md:w-60 md:h-48 rounded-lg overflow-hidden shadow-lg z-0">
                     <img
                       src="/climbing_pic.jpg"
                       alt="Climbing"
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <div className="absolute top-0 left-2/3 -translate-x-2/3 w-60 h-48 rounded-lg overflow-hidden shadow-xl z-10">
+                  <div className="absolute top-0 left-2/3 -translate-x-2/3 w-32 h-24 sm:w-48 sm:h-36 md:w-60 md:h-48 rounded-lg overflow-hidden shadow-xl z-10">
                     <img
                       src="/skiing_pic.jpg"
                       alt="Skiing"
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <div className="absolute bottom-0 right-0 w-60 h-48 rounded-lg overflow-hidden shadow-xl z-10">
+                  <div className="absolute bottom-0 right-0 w-32 h-24 sm:w-48 sm:h-36 md:w-60 md:h-48 rounded-lg overflow-hidden shadow-xl z-10">
                     <img
                       src="/rhys_kavya_dp.jpg"
                       alt="Rhys and Kavya DP"
@@ -521,7 +524,7 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
                         <Badge
                           key={skillIndex}
                           variant="secondary"
-                          className="bg-gradient-to-r from-blue-100 to-green-100 text-blue-800 hover:from-blue-200 hover:to-green-200 transition-colors duration-300 text-xs font-medium-body"
+                          className="bg-gradient-to-r from-blue-100 to-green-100 text-blue-800 hover:from-blue-200 hover:to-green-200 transition-colors duration-300 text-sm font-medium-body"
                         >
                           {skill}
                         </Badge>
@@ -536,27 +539,28 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
           {/* Experience Section */}
           <section className="py-10">
             <h2 className="text-3xl text-center text-slate-800 font-heading mb-12">Experience</h2>
-            <div className="relative">
-              <div className="absolute top-4 left-12 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 to-green-400"></div>
+            <div className="relative px-4 sm:px-0">
+              {/* Timeline line - hidden on mobile, shown on larger screens */}
+              <div className="hidden md:block absolute top-4 left-12 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 to-green-400"></div>
               {experiences.map((exp, index) => (
-                <div key={index} className="relative mb-8 ml-28">
-                  {/* Circular company logo, optionally wrapped in a link */}
-                  <div className="absolute -left-28 top-4 w-24 h-24 flex items-center justify-center rounded-full bg-white border-2 border-blue-300 shadow overflow-hidden">
+                <div key={index} className="relative mb-8 md:ml-28">
+                  {/* Logo - smaller on mobile, positioned differently */}
+                  <div className="md:absolute md:-left-28 md:top-4 mb-4 md:mb-0 w-16 h-16 md:w-24 md:h-24 flex items-center justify-center rounded-full bg-white border-2 border-blue-300 shadow overflow-hidden mx-auto md:mx-0">
                     {exp.icon ? (
                       <a href={exp.icon} target="_blank" rel="noopener noreferrer">
-                        <img src={exp.icon} alt={exp.company + ' logo'} className="w-16 h-16 object-contain" />
+                        <img src={exp.icon} alt={exp.company + ' logo'} className="w-10 h-10 md:w-20 md:h-20 object-contain" />
                       </a>
                     ) : (
-                      <img src={exp.icon} alt={exp.company + ' logo'} className="w-16 h-16 object-contain" />
+                      <img src={exp.icon} alt={exp.company + ' logo'} className="w-10 h-10 md:w-20 md:h-20 object-contain" />
                     )}
                   </div>
-                  <div className="bg-white/60 left-24 backdrop-blur-sm border border-white/20 rounded-lg p-6 hover:shadow-lg transition-all duration-300">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="text-lg font-heading text-slate-800">{exp.title}</h3>
-                        <p className="text-base font-medium-body bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">{exp.company}</p>
+                  <div className="bg-white/60 backdrop-blur-sm border border-white/20 rounded-lg p-4 md:p-6 hover:shadow-lg transition-all duration-300">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
+                      <div className="mb-2 md:mb-0">
+                        <h3 className="text-base md:text-lg font-heading text-slate-800">{exp.title}</h3>
+                        <p className="text-sm md:text-base font-medium-body bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">{exp.company}</p>
                       </div>
-                      <div className="text-right text-xs text-slate-500">
+                      <div className="text-left md:text-right text-xs text-slate-500">
                         <div className="flex items-center gap-1 bg-gradient-to-r from-blue-50 to-green-50 px-2 py-1 rounded-full mb-1 hover:bg-gradient-to-r hover:from-blue-200 hover:to-green-200 hover:scale-105 transition-all duration-200 cursor-pointer">
                           <Calendar className="w-3 h-3 text-blue-600" />
                           <span className="font-body">{exp.period}</span>
@@ -567,7 +571,7 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
                         </div>
                       </div>
                     </div>
-                    <p className="text-sm text-slate-700 font-body">{exp.description}</p>
+                    <p className="text-xs md:text-sm text-slate-700 font-body">{exp.description}</p>
                   </div>
                 </div>
               ))}
@@ -687,7 +691,7 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
                   >
                     <Button
                     size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium-body"
+                    className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium-body px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
                   >
                     <Mail className="w-5 h-5 mr-2" /> Get In Touch
                   </Button>
@@ -695,7 +699,7 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
                   <a href="https://linkedin.com/in/rhys-burman" target="_blank" rel="noopener noreferrer">
                     <Button
                       size="lg"
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-8 py-3 border-0"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:scale-105 transition-all duration-300 font-medium-body shadow-xl px-4 py-2 sm:px-8 sm:py-3 border-0 text-sm sm:text-base"
                     >
                       <Linkedin className="w-5 h-5 mr-2" /> LinkedIn
                     </Button>

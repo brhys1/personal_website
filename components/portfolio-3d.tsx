@@ -872,12 +872,12 @@ export default function Portfolio() {
       }}
     >
       {/* View Toggle Button */}
-      <button
+      {show3DOnly && <button
         onClick={() => setShow3DOnly((prev) => !prev)}
         className="fixed top-8 right-8 bg-slate-900 px-6 py-3 rounded-lg border border-slate-700 text-white/90 shadow-xl z-50 hover:bg-slate-800 transition-colors"
       >
         {show3DOnly ? "Back to Basic View" : "Explore in 3D"}
-      </button>
+      </button>}
 
       {show3DOnly ? (
         <div
