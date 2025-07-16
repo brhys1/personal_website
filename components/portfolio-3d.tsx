@@ -8,6 +8,7 @@ import { useRef, useState, useEffect, useMemo, memo, Suspense } from "react"
 import * as THREE from "three"
 import { useIsMobile } from "../hooks/use-mobile"
 import RegularPortfolio from "./regular-portfolio"
+import { useTexture } from '@react-three/drei'
 
 const BLOCK_COUNT = 40 // how many blocks to spawn
 const SPACING = 6 // distance (z) between blocks
@@ -128,7 +129,7 @@ interface ExperienceDisplayProps {
   title: string
   company: string
   impact: string | string[]
-  logoPlaceholder?: boolean
+  logoPath?: string
 }
 
 function ExperienceDisplay({
@@ -137,7 +138,7 @@ function ExperienceDisplay({
   title,
   company,
   impact,
-  logoPlaceholder = true,
+  logoPath,
 }: ExperienceDisplayProps) {
   const groupRef = useRef<THREE.Group>(null)
   const platformColor = "#60a5fa"
@@ -149,11 +150,27 @@ function ExperienceDisplay({
     }
   })
 
+  const logoTexture = logoPath ? useTexture(logoPath) : null
+  const logoAspect = logoTexture ? (logoTexture.image.width / logoTexture.image.height) : null
+
   return (
     <group rotation={rotation} ref={groupRef}>
       <group position={[0, 1.5, 0]}>
-        {/* Logo placeholder */}
-        {logoPlaceholder && (
+        {/* Logo */}
+        {logoTexture && logoAspect ? (
+          <group position={[0, 4.5, 0]}>
+           <mesh>
+              <planeGeometry args={[7, 2.5]} />
+              <meshStandardMaterial color="white" />
+            </mesh>
+            
+            {/* Logo slightly in front to avoid z-fighting */}
+            <mesh position={[0, 0, 0.01]}>
+              <planeGeometry args={[logoAspect * 1.5, 1.5]} />
+              <meshStandardMaterial map={logoTexture} transparent />
+            </mesh>
+          </group>
+        ) : (
           <mesh position={[0, 4.5, 0]}>
             <boxGeometry args={[4, 1, 0.2]} />
             <meshStandardMaterial color="#e5e7eb" />
@@ -161,17 +178,17 @@ function ExperienceDisplay({
         )}
 
         <mesh position={[0, 0.4, -0.05]}>
-          <planeGeometry args={[5.5, 10]} />
+          <planeGeometry args={[7, 12]} />
           <meshStandardMaterial color="white" transparent opacity={1} />
         </mesh>
         {/* Company Name */}
         <Text
-          position={[0, 3, 0]}
-          fontSize={0.4}
+          position={[0, 2.5, 0]}
+          fontSize={0.6}
           color={TEXT_COLORS.company}
           anchorX="center"
           anchorY="middle"
-          maxWidth={4}
+          maxWidth={6}
           fontWeight={600}
         >
           {company}
@@ -179,12 +196,12 @@ function ExperienceDisplay({
 
         {/* Title */}
         <Text
-          position={[0, 2, 0]}
-          fontSize={0.25}
+          position={[0, 1.5, 0]}
+          fontSize={0.4}
           color={TEXT_COLORS.title}
           anchorX="center"
           anchorY="middle"
-          maxWidth={4}
+          maxWidth={6}
           fontWeight={500}
         >
           {title}
@@ -195,12 +212,12 @@ function ExperienceDisplay({
           impact.map((point, index) => (
             <Text
               key={index}
-              position={[-1.8, 1 - index * 0.4, 0]}
-              fontSize={0.18}
+              position={[-2.5, 0.5 - index * 0.5, 0]}
+              fontSize={0.25}
               color={TEXT_COLORS.content}
               anchorX="left"
               anchorY="middle"
-              maxWidth={3.4}
+              maxWidth={4.8}
               lineHeight={1.2}
             >
               • {point}
@@ -235,10 +252,9 @@ interface ProjectDisplayProps {
   title: string
   description: string
   technologies: string[]
-  highlights: string[]
 }
 
-function ProjectDisplay({ position, rotation, title, description, technologies, highlights }: ProjectDisplayProps) {
+function ProjectDisplay({ position, rotation, title, description, technologies }: ProjectDisplayProps) {
   const groupRef = useRef<THREE.Group>(null)
   const platformColor = "#10b981" // emerald-500 for projects
 
@@ -259,18 +275,18 @@ function ProjectDisplay({ position, rotation, title, description, technologies, 
         </mesh>
 
         <mesh position={[0, 0.4, -0.05]}>
-          <planeGeometry args={[5.5, 10]} />
+          <planeGeometry args={[9, 12]} />
           <meshStandardMaterial color="white" transparent opacity={1} />
         </mesh>
 
         {/* Project Title */}
         <Text
-          position={[0, 3, 0]}
-          fontSize={0.4}
+          position={[0, 2.5, 0]}
+          fontSize={0.6}
           color="#059669" // emerald-700
           anchorX="center"
           anchorY="middle"
-          maxWidth={4}
+          maxWidth={6}
           fontWeight={600}
         >
           {title}
@@ -278,12 +294,12 @@ function ProjectDisplay({ position, rotation, title, description, technologies, 
 
         {/* Description */}
         <Text
-          position={[0, 2.2, 0]}
-          fontSize={0.2}
+          position={[0, 1, 0]}
+          fontSize={0.3}
           color={TEXT_COLORS.title}
           anchorX="center"
           anchorY="middle"
-          maxWidth={4.5}
+          maxWidth={6}
           textAlign="center"
           fontWeight={500}
         >
@@ -292,32 +308,16 @@ function ProjectDisplay({ position, rotation, title, description, technologies, 
 
         {/* Technologies */}
         <Text
-          position={[0, 1.6, 0]}
-          fontSize={0.15}
+          position={[0, -0.2, 0]}
+          fontSize={0.3}
           color="#6b7280" // gray-500
           anchorX="center"
           anchorY="middle"
-          maxWidth={4.5}
+          maxWidth={6}
           textAlign="center"
         >
           {technologies.join(" • ")}
         </Text>
-
-        {/* Highlights */}
-        {highlights.map((highlight, index) => (
-          <Text
-            key={index}
-            position={[-1.8, 0.8 - index * 0.4, 0]}
-            fontSize={0.18}
-            color={TEXT_COLORS.content}
-            anchorX="left"
-            anchorY="middle"
-            maxWidth={3.4}
-            lineHeight={1.2}
-          >
-            • {highlight}
-          </Text>
-        ))}
       </group>
 
       {/* Particle effect with different color */}
@@ -400,7 +400,7 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; ro
         </Text>
 
         <Text
-          position={[0, -0.4, 0]}
+          position={[0, -1, 0]}
           fontSize={0.18}
           color={TEXT_COLORS.content}
           anchorX="center"
@@ -408,30 +408,7 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; ro
           maxWidth={4.5}
           textAlign="center"
         >
-          Python • SQL • C++ • R • Java • JavaScript
-        </Text>
-        <Text
-          position={[0, -0.7, 0]}
-          fontSize={0.18}
-          color={TEXT_COLORS.content}
-          anchorX="center"
-          anchorY="middle"
-          maxWidth={4.5}
-          textAlign="center"
-        >
-          AWS • Docker • PostgreSQL • Pandas • React.js
-        </Text>
-            <Text
-          position={[0, -1.0, 0]}
-          fontSize={0.18}
-              color={TEXT_COLORS.content}
-              anchorX="center"
-              anchorY="middle"
-          maxWidth={4.5}
-          textAlign="center"
-            >
-          PyTorch • Scikit-Learn • Flask • Firebase
-            </Text>
+          I’m a data scientist at the University of Michigan (MS in Data Science, graduating May 2027) focused on using data and machine learning to reduce companies’ carbon footprints and address climate challenges. Have fun exploring! </Text>
       </group>
     </group>
   )
@@ -616,11 +593,9 @@ function ExperienceSection() {
         company="Clear Estimates"
         title="Data Engineering Intern"
         impact={[
-          "Built a distributed price scraping system using Python and Selenium, retrieving 6,000+ prices from 350+ supplier locations; improved data accuracy by 21% and error detection by 20%.",
-          "Containerized and deployed the pipeline via AWS Batch and Docker, and created Pandas analysis scripts; reduced collection time by 97%, freeing 1000+ hours per year in manual collection and processing.",
-          "Designed and engineered workflows to integrate RemodelingCosts.com, leveraging prebuilt templates from custom API and query classification to generate contractor leads; expected to 3x net company revenue in 4 years.",
-          "Processed 28M+ rows of labor data using Pandas and PostgreSQL to identify and correct input inconsistencies, increased model accuracy by 19% and customer satisfaction by 62%.",
+          "Built distributed price scraping and data engineering systems for construction cost estimation.",
         ]}
+        logoPath="/CE_logo.png"
       />
 
       {/* RemodelingCosts.com */}
@@ -630,10 +605,9 @@ function ExperienceSection() {
         company="RemodelingCosts.com"
         title="Data Science Intern"
         impact={[
-          "Implemented GenAI to generate templates based on user queries, enabling AI-driven estimate generation; used Google analytics and model-query A/B testing to increase accuracy and generate 80% more leads across 5+ iterations.",
-          "Collaborated with CEO to build platform to connect users with contractors; projected 3x in total company revenue.",
-          "Designed and engineered AI generated templates, based on unsupervised grouping, Vertex AI vectorized database, and Gemini text processing; allowed for 50% increase in number of user on platform and 70% higher lead conversion rate.",
+          "Implemented GenAI and query classification for AI-driven estimate generation and lead optimization.",
         ]}
+        logoPath="/Remodeling_Costs_Logo.png"
       />
 
       {/* Delta Airlines */}
@@ -643,21 +617,21 @@ function ExperienceSection() {
         company="Delta Airlines"
         title="ML Software Intern"
         impact={[
-          "Engineered and trained two ML models using PyTorch (Random Forest and Logistic Regressor) that estimate delays and connection success rates (R² = 0.99; specificity 96%), significantly reducing reliance on conservative scheduling buffers.",
-          "Enabled an average 4-minute reduction in departure time at DTW, unlocking the potential to schedule additional flights, generating a projected $2M in annual profit through improved aircraft utilization and on-time departures.",
+          "Engineered and trained ML models for flight delay and connection success prediction.",
         ]}
+        logoPath="/delta_logo.png"
       />
 
       {/* UMich Sustainability */}
       <ExperienceDisplay
         position={[12, 0, 15]}
         rotation={[0, Math.PI / 3 + Math.PI, 0]}
-        company="University of Michigan - Office of Campus Sustainability"
+        company="U of M - Office of Sustainability"
         title="Data Scientist"
         impact={[
-          "Designed and implemented Python Polars pipelines to classify millions of transactions by GHG emissions category with TF-IDF — automated and streamlined processes during the university’s first attempt at classifying Scope 3 emissions.",
-          "Used Gen-AI to extract and breakdown emissions data, reducing manual labor by over 60%; developed repeatable Python scripts to make workflows scalable.",
+          "Developed and implemented Python Polars pipelines to classify GHG emissions categories.",
         ]}
+        logoPath="/ocs_logo.png"
       />
 
       {/* Integrate Health */}
@@ -667,10 +641,9 @@ function ExperienceSection() {
         company="Integrate Health"
         title="Founding Data Engineer"
         impact={[
-          "Provisioned HIPAA-compliant infrastructure using AWS Aurora PostgreSQL within a VPC; launched encrypted database to support sensitive EHR data for risk assessment modeling.",
-          "Supported engineering of patient and population health data pipelines to feed risk models achieving 87% accuracy–outperforming common commercial models.",
-          "Developed custom dashboards platform allowing for hospitals to visualize and analyze both individual and population-level health data; surfaced risk trends that informed equitable care recommendations.",
+          "Developed and implemented Python Polars pipelines to classify GHG emissions categories.",
         ]}
+        logoPath="/Integrate_logo.png"
       />
     </group>
   )
@@ -699,9 +672,6 @@ function ProjectsSection() {
         title="MCC Carpools Web App"
         description="Developed a scalable carpool web app using React.js, Flask, and PostgreSQL; increased group participation by 61%."
         technologies={["React.js", "Flask", "PostgreSQL", "Google Maps API"]}
-        highlights={[
-          "Implemented Google Maps API for geo-optimization and created REST APIs for CRUD operations and data matching.",
-        ]}
       />
       {/* KTP Spotify Playlist Generator */}
       <ProjectDisplay
@@ -710,29 +680,22 @@ function ProjectsSection() {
         title="KTP Spotify Playlist Generator"
         description="Designed backend APIs to serve music suggestions in real time, using Firebase, Spotify OAuth, and Elasticsearch."
         technologies={["Firebase", "Spotify OAuth", "Elasticsearch", "TF-IDF"]}
-        highlights={[
-          "Built a custom TF-IDF-based classifier for party music that achieved 73% accuracy; integrated with personal user data.",
-        ]}
       />
       {/* MapReduce Simulator & Search Engine */}
       <ProjectDisplay
         position={[-12, 0, 15]}
         rotation={[0, -Math.PI / 3 + Math.PI, 0]}
-        title="MapReduce Simulator & Search Engine"
+        title="MapReduce & Search Engine"
         description="Simulated distributed MapReduce system using TCP/UDP, fault tolerance, parallelization, and heartbeat tracking."
         technologies={["Python", "Flask", "TCP/UDP", "TF-IDF"]}
-        highlights={[
-          "Built an inverted index system with TF-IDF weighting and exposed a Flask API to serve ranked search results.",
-        ]}
       />
       {/* ML Cuisine Classifier */}
       <ProjectDisplay
         position={[12, 0, 15]}
         rotation={[0, Math.PI / 3 + Math.PI, 0]}
         title="ML Cuisine Classifier"
-        description="Developed and optimized an ML pipeline using scikit-learn, integrating TF-IDF, Random Forest, K-fold testing, and K-Nearest Neighbors (KNN) to bring classification accuracy to 83%."
+        description="Cleaned and preprocessed data, feature engineered, and optimized an ML pipeline; classification accuracy 83%."
         technologies={["scikit-learn", "TF-IDF", "Random Forest", "KNN"]}
-        highlights={[]}
       />
     </group>
   )
