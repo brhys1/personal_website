@@ -157,6 +157,8 @@ export default function RegularPortfolio() {
     <div className="min-h-screen bg-transparent font-body relative">
       {/* Floating Hero Section */}
       <section className="relative h-screen flex items-center justify-center px-4">
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        
         <div className="text-center z-10">
           <div className="mb-8">
             <img
@@ -166,9 +168,9 @@ export default function RegularPortfolio() {
             />
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-heading text-white mb-4 drop-shadow-lg">Rhys Burman</h1>
+          <h1 className="text-5xl md:text-7xl font-heading text-white mb-8 drop-shadow-lg">Rhys Burman</h1>
           <p className="text-xl md:text-2xl text-white/90 font-medium-body mb-6 drop-shadow-md">
-            Data Scientist & Sustainability
+            Data Science & Sustainability
           </p>
 
           <div className="flex flex-wrap justify-center items-center gap-4 text-white/80 mb-8">

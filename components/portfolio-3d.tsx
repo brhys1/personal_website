@@ -421,17 +421,17 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; ro
         >
           AWS • Docker • PostgreSQL • Pandas • React.js
         </Text>
-        <Text
+            <Text
           position={[0, -1.0, 0]}
           fontSize={0.18}
-          color={TEXT_COLORS.content}
-          anchorX="center"
-          anchorY="middle"
+              color={TEXT_COLORS.content}
+              anchorX="center"
+              anchorY="middle"
           maxWidth={4.5}
           textAlign="center"
-        >
+            >
           PyTorch • Scikit-Learn • Flask • Firebase
-        </Text>
+            </Text>
       </group>
     </group>
   )
@@ -528,40 +528,40 @@ function InterestPedestal({
       >
         Interests
       </Text>
-      <group rotation={rotation} ref={groupRef}>
-        {/* Platform base */}
-        <mesh position={[0, 0, 0]}>
-          <cylinderGeometry args={[1, 1.2, 0.2, 8]} />
-          <meshStandardMaterial color={platformColor} />
-        </mesh>
+    <group rotation={rotation} ref={groupRef}>
+      {/* Platform base */}
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[1, 1.2, 0.2, 8]} />
+        <meshStandardMaterial color={platformColor} />
+      </mesh>
 
-        {/* Light beam */}
-        <mesh position={[0, 1, 0]}>
-          <cylinderGeometry args={[0.1, 1, 2, 8, 1, true]} />
-          <meshStandardMaterial color={platformColor} transparent opacity={0.1} side={THREE.DoubleSide} />
-        </mesh>
+      {/* Light beam */}
+      <mesh position={[0, 1, 0]}>
+        <cylinderGeometry args={[0.1, 1, 2, 8, 1, true]} />
+        <meshStandardMaterial color={platformColor} transparent opacity={0.1} side={THREE.DoubleSide} />
+      </mesh>
 
-        {/* Rotating ring */}
-        <mesh position={[0, 0.5, 0]} rotation={[0, time.current * 0.5 + (position[0] < -10 ? Math.PI : 0), 0]}>
-          <torusGeometry args={[1.1, 0.05, 16, 32]} />
-          <meshStandardMaterial color={platformColor} />
-        </mesh>
+      {/* Rotating ring */}
+      <mesh position={[0, 0.5, 0]} rotation={[0, time.current * 0.5 + (position[0] < -10 ? Math.PI : 0), 0]}>
+        <torusGeometry args={[1.1, 0.05, 16, 32]} />
+        <meshStandardMaterial color={platformColor} />
+      </mesh>
 
-        {/* Icon */}
-        {renderIcon()}
+      {/* Icon */}
+      {renderIcon()}
 
-        {/* Label */}
-        <Text
-          position={[0, 0.3, 1.3]}
-          fontSize={0.2}
-          color={TEXT_COLORS.content}
-          fontWeight={700}
-          anchorX="center"
-          anchorY="middle"
-        >
-          {label}
-        </Text>
-      </group>
+      {/* Label */}
+      <Text
+        position={[0, 0.3, 1.3]}
+        fontSize={0.2}
+        color={TEXT_COLORS.content}
+        fontWeight={700}
+        anchorX="center"
+        anchorY="middle"
+      >
+        {label}
+      </Text>
+    </group>
     </>
   )
 }
@@ -577,7 +577,7 @@ function ExperienceSection() {
         color={TEXT_COLORS.heading}
         anchorX="center"
         anchorY="middle"
-        maxWidth={20}
+        maxWidth={20} 
         fontWeight={700}
       >
         EXPERIENCES
@@ -796,12 +796,12 @@ function IntroCard() {
 }
 
 // Memoize the entire NatureScene to prevent unnecessary re-renders
-const NatureScene = memo(function NatureScene() {
+const NatureScene = memo(function NatureScene({ show3DOnly }: { show3DOnly: boolean }) {
   return (
     <>
       {/* <IntroCard /> */}
-      <ExperienceSection />
-      <ProjectsSection />
+      {show3DOnly && <ExperienceSection />}
+      {show3DOnly && <ProjectsSection />}
       <PathStones />
       <Forest />
       <Mountains position={[0, 0, 400]} />
@@ -811,7 +811,7 @@ const NatureScene = memo(function NatureScene() {
 })
 
 function RideCameraRig({
-  children,
+  children, 
   manualOffset,
   show3DOnly,
 }: { children: React.ReactNode; manualOffset: number; show3DOnly: boolean }) {
@@ -984,13 +984,13 @@ export default function Portfolio() {
               <ScrollControls pages={4} damping={0.15}>
                 <Scroll>
                   <RideCameraRig manualOffset={manualOffset} show3DOnly={show3DOnly}>
-                    <NatureScene />
+                    <NatureScene show3DOnly={show3DOnly} />
                   </RideCameraRig>
                 </Scroll>
               </ScrollControls>
             ) : (
               <RideCameraRig manualOffset={manualOffset} show3DOnly={show3DOnly}>
-                <NatureScene />
+                <NatureScene show3DOnly={show3DOnly} />
               </RideCameraRig>
             )}
           </Suspense>
