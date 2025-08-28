@@ -183,7 +183,7 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
         "Implemented Google Maps API for geo-optimization and created REST APIs for CRUD operations and data matching.",
       ],
       github: "https://github.com/brhys1/mcc-carpools",
-      demo: "https://mcc-carpools.vercel.app/",
+      demo: "https://carpools.michiganclimbingclub.com/",
       gradient: "from-blue-600 to-green-600",
     },
     {
