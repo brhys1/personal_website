@@ -131,45 +131,41 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
 
   const experiences = [
     {
-      title: "Data Engineering Intern",
-      company: "Clear Estimates",
-      location: "Ann Arbor, MI",
-      period: "May 2024 – May 2025",
-      description: "Built distributed price scraping and data engineering systems for construction cost estimation.",
-      icon: "/CE_logo.png",
-    },
-    {
       title: "Data Science Intern",
-      company: "RemodelingCosts.com",
-      location: "Ann Arbor, MI",
-      period: "June 2025 – Present",
+      company: "Meta",
+      location: "Menlo Park, CA",
+      period: "June 2026 – Aug 2026",
       description:
-        "Implemented GenAI and query classification for AI-driven estimate generation and lead optimization.",
-      icon: "/Remodeling_Costs_Logo.png",
+        "Built a sentiment proxy with Random Forest and Empirical Bayes for experiment monitoring, and engineered a classification pipeline processing 3B+ users daily.",
+      icon: "/meta_logo.jpg",
+      iconZoom: true,
     },
     {
-      title: "ML Software Intern",
+      title: "Data Science Analyst",
       company: "Delta Airlines",
       location: "Detroit, MI",
       period: "Feb 2025 – April 2025",
-      description: "Engineered and trained ML models for flight delay and connection success prediction.",
+      description:
+        "Built flight connection delay models (R² = 0.99) and a React/Flask inference tool, enabling 70% faster gate hold decisions at DTW.",
       icon: "/delta_logo.png",
     },
     {
-      title: "Data Scientist",
+      title: "Data Analyst Intern",
       company: "University of Michigan - Office of Campus Sustainability",
       location: "Ann Arbor, MI",
-      period: "June 2025 – Present",
-      description: "Automated GHG emissions classification and data extraction for sustainability reporting.",
+      period: "June 2025 – May 2026",
+      description:
+        "Designed Python Polars pipelines with TF-IDF and Gen-AI to classify Scope 3 emissions transactions, cutting manual labor by 60%.",
       icon: "/ocs_logo.png",
     },
     {
-      title: "Founding Data Engineer",
-      company: "Integrate Health",
+      title: "Data Science Intern",
+      company: "Clear Estimates",
       location: "Ann Arbor, MI",
-      period: "October 2024 – Present",
-      description: "Provisioned HIPAA-compliant infrastructure and engineered risk modeling pipelines for healthcare.",
-      icon: "/Integrate_logo.png",
+      period: "May 2024 – Sep 2025",
+      description:
+        "Built GenAI-driven estimate generation and a distributed web scraper for RemodelingCosts.com, increasing leads 80% and cutting data collection time by 97%.",
+      icon: "/CE_logo.png",
     },
   ]
 
@@ -411,14 +407,15 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
                   {aboutMode === "professional" ? (
                     <div className="text-slate-700 leading-relaxed font-body space-y-4">
                       <p>
-                        I'm a passionate data scientist specializing in sustainability at the University of Michigan.
-                        Planning on graduating in May 2027 with an MS in Data Science, I want to combine data and
-                        machine learning with expertise in climate science to drive meaningful environmental impact and
+                        I'm a passionate data scientist specializing in sustainability. I graduated in May 2026 my B.S. in
+                        Data Science at the University of Michigan and am pursuing an M.S. in Data Science at the
+                        Georgia Institute of Technology, expected Summer 2027. I want to combine data and machine
+                        learning with expertise in climate science to drive meaningful environmental impact and
                         help companies reduce their carbon footprint.
                       </p>
                       <p>
-                        My experience spans data engineering, machine learning, and sustainability analytics across
-                        various industries including construction, healthcare, and aviation. I'm particularly interested
+                        My experience spans data science, machine learning, and sustainability analytics across
+                        various industries including tech, construction, and aviation. I'm particularly interested
                         in leveraging AI and data science to solve complex environmental challenges.
                       </p>
                     </div>
@@ -548,10 +545,18 @@ export default function RegularPortfolio({ setShow3DOnly }: { setShow3DOnly?: (v
                   <div className="md:absolute md:-left-28 md:top-4 mb-4 md:mb-0 w-16 h-16 md:w-24 md:h-24 flex items-center justify-center rounded-full bg-white border-2 border-blue-300 shadow overflow-hidden mx-auto md:mx-0">
                     {exp.icon ? (
                       <a href={exp.icon} target="_blank" rel="noopener noreferrer">
-                        <img src={exp.icon} alt={exp.company + ' logo'} className="w-10 h-10 md:w-20 md:h-20 object-contain" />
+                        <img
+                          src={exp.icon}
+                          alt={exp.company + ' logo'}
+                          className={`w-10 h-10 md:w-20 md:h-20 object-contain ${exp.iconZoom ? "scale-150" : ""}`}
+                        />
                       </a>
                     ) : (
-                      <img src={exp.icon} alt={exp.company + ' logo'} className="w-10 h-10 md:w-20 md:h-20 object-contain" />
+                      <img
+                        src={exp.icon}
+                        alt={exp.company + ' logo'}
+                        className={`w-10 h-10 md:w-20 md:h-20 object-contain ${exp.iconZoom ? "scale-150" : ""}`}
+                      />
                     )}
                   </div>
                   <div className="bg-white/60 backdrop-blur-sm border border-white/20 rounded-lg p-4 md:p-6 hover:shadow-lg transition-all duration-300">

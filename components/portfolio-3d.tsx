@@ -408,7 +408,7 @@ function PersonalCard({ position, rotation }: { position: THREE.Vector3Tuple; ro
           maxWidth={4.5}
           textAlign="center"
         >
-          I’m a data scientist at the University of Michigan (MS in Data Science, graduating May 2027) focused on using data and machine learning to reduce companies’ carbon footprints and address climate challenges. Have fun exploring! </Text>
+          I’m a data scientist with a B.S. at the University of Michigan and pursuing an M.S. in Data Science at Georgia Tech (graduating Summer 2027), focused on using data and machine learning to reduce companies’ carbon footprints and address climate challenges. Have fun exploring! </Text>
       </group>
     </group>
   )
@@ -586,64 +586,56 @@ function ExperienceSection() {
         />
       </group>
 
-      {/* Clear Estimates */}
+      {/* Meta */}
       <ExperienceDisplay
         position={[-12, 0, 0]}
         rotation={[0, -Math.PI / 3 + Math.PI, 0]}
-        company="Clear Estimates"
-        title="Data Engineering Intern"
-        impact={[
-          "Built distributed price scraping and data engineering systems for construction cost estimation.",
-        ]}
-        logoPath="/CE_logo.png"
-      />
-
-      {/* RemodelingCosts.com */}
-      <ExperienceDisplay
-        position={[12, 0, 0]}
-        rotation={[0, Math.PI / 3 + Math.PI, 0]}
-        company="RemodelingCosts.com"
+        company="Meta"
         title="Data Science Intern"
         impact={[
-          "Implemented GenAI and query classification for AI-driven estimate generation and lead optimization.",
+          "Built a sentiment proxy with Random Forest and Empirical Bayes for experiment monitoring.",
+          "Engineered a classification pipeline processing 3B+ users daily.",
         ]}
-        logoPath="/Remodeling_Costs_Logo.png"
+        logoPath="/meta_logo.jpg"
       />
 
       {/* Delta Airlines */}
       <ExperienceDisplay
-        position={[-12, 0, 15]}
-        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
+        position={[12, 0, 0]}
+        rotation={[0, Math.PI / 3 + Math.PI, 0]}
         company="Delta Airlines"
-        title="ML Software Intern"
+        title="Data Science Analyst"
         impact={[
-          "Engineered and trained ML models for flight delay and connection success prediction.",
+          "Built flight connection delay models (R² = 0.99) using Pandas and PyTorch.",
+          "Enabled 70% faster gate hold decisions at DTW via a React/Flask inference tool.",
         ]}
         logoPath="/delta_logo.png"
       />
 
       {/* UMich Sustainability */}
       <ExperienceDisplay
-        position={[12, 0, 15]}
-        rotation={[0, Math.PI / 3 + Math.PI, 0]}
+        position={[-12, 0, 15]}
+        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
         company="U of M - Office of Sustainability"
-        title="Data Scientist"
+        title="Data Analyst Intern"
         impact={[
-          "Developed and implemented Python Polars pipelines to classify GHG emissions categories.",
+          "Designed Python Polars pipelines with TF-IDF and Gen-AI to classify Scope 3 emissions.",
+          "Reduced manual labor by over 60% while ensuring reproducibility.",
         ]}
         logoPath="/ocs_logo.png"
       />
 
-      {/* Integrate Health */}
+      {/* Clear Estimates */}
       <ExperienceDisplay
-        position={[-12, 0, 30]}
-        rotation={[0, -Math.PI / 3 + Math.PI, 0]}
-        company="Integrate Health"
-        title="Founding Data Engineer"
+        position={[12, 0, 15]}
+        rotation={[0, Math.PI / 3 + Math.PI, 0]}
+        company="Clear Estimates"
+        title="Data Science Intern"
         impact={[
-          "Developed and implemented Python Polars pipelines to classify GHG emissions categories.",
+          "Built GenAI-driven estimate generation for RemodelingCosts.com, increasing leads 80%.",
+          "Deployed a distributed web scraper to AWS Batch, cutting collection time by 97%.",
         ]}
-        logoPath="/Integrate_logo.png"
+        logoPath="/CE_logo.png"
       />
     </group>
   )
